@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Command, Sparkles } from 'lucide-react';
+import { Menu, X, Search, Sparkles } from 'lucide-react';
 import { siteConfig } from '@/content/site';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { CommandPalette } from '@/components/layout/CommandPalette';
@@ -47,7 +47,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           left: 0,
           right: 0,
           zIndex: 9999,
-          padding: '0.65rem 1.15rem',
+          padding: '0.65rem 1rem',
           backgroundColor: 'var(--bg-translucent)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -62,7 +62,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '0.75rem',
+            gap: '0.5rem',
           }}
         >
           {/* Brand Wordmark & Active Pulse */}
@@ -71,9 +71,9 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.625rem',
+              gap: '0.55rem',
               textDecoration: 'none',
-              padding: '0.25rem 0.4rem',
+              padding: '0.2rem 0.35rem',
               borderRadius: 'var(--radius-md)',
               transition: 'all var(--transition-fast)',
               flexShrink: 0,
@@ -103,10 +103,11 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontWeight: 600,
-                  fontSize: '0.925rem',
+                  fontSize: 'clamp(0.85rem, 2.5vw, 0.925rem)',
                   color: 'var(--text-primary)',
                   letterSpacing: '-0.01em',
                   lineHeight: 1.2,
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Ayush Sharan
@@ -125,7 +126,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
+                    fontSize: '0.625rem',
                     color: 'var(--accent-primary)',
                     letterSpacing: '0.04em',
                     textTransform: 'uppercase',
@@ -198,25 +199,26 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             })}
           </nav>
 
-          {/* Action Tools (Cmd+K desktop, Theme Toggle, Mobile Menu) */}
+          {/* Action Tools (Search, Ask AI, Theme Toggle, Mobile Menu) */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.35rem',
               flexShrink: 0,
             }}
           >
-            {/* Command Palette Trigger (Desktop Only) */}
+            {/* Quick Search & Command Palette Trigger */}
             <button
               onClick={() => setIsCommandOpen(true)}
-              aria-label="Open Command Palette"
-              title="Open Command Palette (Cmd/Ctrl + K)"
+              aria-label="Quick Search & Navigation (Cmd/Ctrl + K)"
+              title="Quick Search & Actions (Cmd/Ctrl + K)"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '0.4rem',
-                padding: '0.4rem 0.7rem',
+                padding: '0.4rem 0.65rem',
                 borderRadius: 'var(--radius-full)',
                 backgroundColor: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-medium)',
@@ -224,24 +226,29 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 fontSize: '0.8rem',
                 cursor: 'pointer',
                 transition: 'all var(--transition-fast)',
+                minWidth: '34px',
+                height: '34px',
               }}
-              className="cmd-trigger-btn"
+              className="action-search-btn"
             >
-              <Command size={14} style={{ color: 'var(--accent-primary)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem' }}>⌘K</span>
+              <Search size={15} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+              <span className="search-label" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem' }}>
+                Search <span style={{ opacity: 0.6 }}>⌘K</span>
+              </span>
             </button>
 
-            {/* Optional Ask AI button (Desktop/Tablet) */}
+            {/* Ask AI Assistant button */}
             {onOpenAskAI && (
               <button
                 onClick={onOpenAskAI}
-                aria-label="Explore Ayush with AI Assistant"
+                aria-label="Explore with AI Assistant"
                 title="Ask questions about Ayush"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '0.35rem',
-                  padding: '0.4rem 0.75rem',
+                  padding: '0.4rem 0.65rem',
                   borderRadius: 'var(--radius-full)',
                   backgroundColor: 'var(--accent-subtle)',
                   border: '1px solid var(--accent-border)',
@@ -250,11 +257,13 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                   fontWeight: 500,
                   cursor: 'pointer',
                   transition: 'all var(--transition-fast)',
+                  minWidth: '34px',
+                  height: '34px',
                 }}
-                className="ask-ai-btn"
+                className="action-ai-btn"
               >
-                <Sparkles size={14} />
-                <span>Ask AI</span>
+                <Sparkles size={15} style={{ flexShrink: 0 }} />
+                <span className="ai-label">Ask AI</span>
               </button>
             )}
 
@@ -269,8 +278,8 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '36px',
-                height: '36px',
+                width: '34px',
+                height: '34px',
                 borderRadius: 'var(--radius-full)',
                 backgroundColor: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-medium)',
@@ -280,7 +289,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
               }}
               className="mobile-menu-btn"
             >
-              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {isMobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
             </button>
           </div>
         </div>
@@ -376,8 +385,8 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           .mobile-menu-btn {
             display: none !important;
           }
-          .cmd-trigger-btn {
-            display: inline-flex !important;
+          .search-label, .ai-label {
+            display: inline !important;
           }
         }
         @media (max-width: 859px) {
@@ -387,11 +396,14 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           .mobile-menu-btn {
             display: inline-flex !important;
           }
-          .cmd-trigger-btn {
+          /* On mobile: Compact icon-only buttons for Search & Ask AI */
+          .search-label, .ai-label {
             display: none !important;
           }
-          .ask-ai-btn {
-            display: none !important;
+          .action-search-btn, .action-ai-btn {
+            padding: 0 !important;
+            width: 34px !important;
+            height: 34px !important;
           }
         }
       `}</style>
