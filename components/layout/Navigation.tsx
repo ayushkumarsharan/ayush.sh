@@ -47,13 +47,13 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           left: 0,
           right: 0,
           zIndex: 9999,
-          padding: isScrolled ? '0.65rem 1rem' : '0.9rem 1.25rem',
+          padding: '0.65rem 1.15rem',
           backgroundColor: 'var(--bg-translucent)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: isScrolled ? '1px solid var(--border-medium)' : '1px solid var(--border-subtle)',
-          boxShadow: isScrolled ? 'var(--shadow-md)' : 'none',
-          transition: 'all var(--transition-normal)',
+          boxShadow: isScrolled ? 'var(--shadow-md)' : 'var(--shadow-sm)',
+          transition: 'border-color var(--transition-fast), box-shadow var(--transition-fast)',
         }}
       >
         <div
@@ -62,6 +62,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: '0.75rem',
           }}
         >
           {/* Brand Wordmark & Active Pulse */}
@@ -72,9 +73,10 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
               alignItems: 'center',
               gap: '0.625rem',
               textDecoration: 'none',
-              padding: '0.35rem 0.6rem',
+              padding: '0.25rem 0.4rem',
               borderRadius: 'var(--radius-md)',
               transition: 'all var(--transition-fast)',
+              flexShrink: 0,
             }}
           >
             <span
@@ -91,6 +93,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 fontWeight: 700,
                 fontSize: '0.85rem',
                 boxShadow: '0 0 12px var(--accent-glow)',
+                flexShrink: 0,
               }}
             >
               A
@@ -195,15 +198,16 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             })}
           </nav>
 
-          {/* Action Tools (Cmd+K, Ask AI, Theme Toggle, Mobile Menu) */}
+          {/* Action Tools (Cmd+K desktop, Theme Toggle, Mobile Menu) */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.45rem',
+              gap: '0.5rem',
+              flexShrink: 0,
             }}
           >
-            {/* Command Palette Trigger */}
+            {/* Command Palette Trigger (Desktop Only) */}
             <button
               onClick={() => setIsCommandOpen(true)}
               aria-label="Open Command Palette"
@@ -227,7 +231,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem' }}>⌘K</span>
             </button>
 
-            {/* Ask AI button */}
+            {/* Optional Ask AI button (Desktop/Tablet) */}
             {onOpenAskAI && (
               <button
                 onClick={onOpenAskAI}
@@ -247,9 +251,10 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                   cursor: 'pointer',
                   transition: 'all var(--transition-fast)',
                 }}
+                className="ask-ai-btn"
               >
                 <Sparkles size={14} />
-                <span className="ask-ai-text">Ask AI</span>
+                <span>Ask AI</span>
               </button>
             )}
 
@@ -271,6 +276,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 border: '1px solid var(--border-medium)',
                 color: 'var(--text-primary)',
                 cursor: 'pointer',
+                flexShrink: 0,
               }}
               className="mobile-menu-btn"
             >
@@ -370,6 +376,9 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           .mobile-menu-btn {
             display: none !important;
           }
+          .cmd-trigger-btn {
+            display: inline-flex !important;
+          }
         }
         @media (max-width: 859px) {
           .desktop-nav {
@@ -378,10 +387,11 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           .mobile-menu-btn {
             display: inline-flex !important;
           }
-        }
-        @media (max-width: 480px) {
-          .ask-ai-text {
-            display: none;
+          .cmd-trigger-btn {
+            display: none !important;
+          }
+          .ask-ai-btn {
+            display: none !important;
           }
         }
       `}</style>

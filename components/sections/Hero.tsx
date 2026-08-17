@@ -40,7 +40,7 @@ export const Hero: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         position: 'relative',
-        paddingTop: 'var(--space-32)',
+        paddingTop: 'clamp(5.5rem, 12vw, 8rem)',
         paddingBottom: 'var(--space-20)',
         overflow: 'hidden',
       }}
@@ -68,48 +68,74 @@ export const Hero: React.FC = () => {
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: '940px' }}>
-          {/* Top Live Telemetry Pill */}
+          {/* Refined Symmetrical Live Telemetry Card Badge */}
           <div
             style={{
               display: 'inline-flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: '0.75rem',
+              flexDirection: 'column',
+              gap: '0.4rem',
               marginBottom: 'var(--space-6)',
-              padding: '0.45rem 0.95rem',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'var(--bg-surface-elevated)',
-              border: '1px solid var(--border-medium)',
-              boxShadow: 'var(--shadow-sm)',
+              maxWidth: '100%',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '0.5rem',
+                padding: '0.4rem 0.85rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-medium)',
+                boxShadow: 'var(--shadow-sm)',
+                backdropFilter: 'blur(12px)',
+                width: 'fit-content',
+                maxWidth: '100%',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0 }}>
+                <span
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--accent-primary)',
+                    boxShadow: '0 0 8px var(--accent-primary)',
+                    flexShrink: 0,
+                  }}
+                  className="pulse-dot"
+                />
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 'clamp(0.725rem, 2.2vw, 0.8rem)',
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  QA & Automation at M2P Fintech • IEEE Published
+                </span>
+              </div>
+
+              <div
                 style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--accent-primary)',
-                  boxShadow: '0 0 8px var(--accent-primary)',
-                }}
-                className="pulse-dot"
-              />
-              <span
-                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  padding: '0.15rem 0.5rem',
+                  borderRadius: 'var(--radius-sm)',
+                  backgroundColor: 'var(--accent-subtle)',
+                  border: '1px solid var(--accent-border)',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.785rem',
-                  color: 'var(--text-secondary)',
+                  fontSize: '0.7rem',
+                  color: 'var(--accent-primary)',
+                  flexShrink: 0,
                 }}
               >
-                QA & Automation at M2P Fintech • IEEE Published
-              </span>
-            </div>
-
-            <span style={{ color: 'var(--border-strong)', fontSize: '0.75rem' }}>|</span>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)' }}>
-              <Activity size={12} />
-              <span>{liveLatency}ms latency</span>
+                <Activity size={11} />
+                <span>{liveLatency}ms latency</span>
+              </div>
             </div>
           </div>
 
@@ -117,11 +143,12 @@ export const Hero: React.FC = () => {
           <h1
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.85rem, 7vw, 5.5rem)',
-              lineHeight: 1.03,
+              fontSize: 'clamp(2.5rem, 7vw, 5.5rem)',
+              lineHeight: 1.05,
               letterSpacing: '-0.035em',
               color: 'var(--text-primary)',
               marginBottom: 'var(--space-6)',
+              wordBreak: 'break-word',
             }}
           >
             {profile.name}
@@ -139,7 +166,7 @@ export const Hero: React.FC = () => {
             <p
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: 'clamp(1.2rem, 2.3vw, 1.75rem)',
+                fontSize: 'clamp(1.15rem, 2.3vw, 1.75rem)',
                 color: 'var(--accent-primary)',
                 fontWeight: 400,
                 letterSpacing: '-0.01em',
@@ -155,7 +182,7 @@ export const Hero: React.FC = () => {
           {/* Summary Narrative */}
           <p
             style={{
-              fontSize: 'clamp(1.025rem, 1.3vw, 1.225rem)',
+              fontSize: 'clamp(1rem, 1.25vw, 1.225rem)',
               color: 'var(--text-secondary)',
               lineHeight: 1.7,
               maxWidth: '740px',
@@ -171,7 +198,7 @@ export const Hero: React.FC = () => {
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
-              gap: '1rem',
+              gap: '0.85rem',
               marginBottom: 'var(--space-12)',
             }}
           >
@@ -207,14 +234,14 @@ export const Hero: React.FC = () => {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.625rem',
+              gap: '0.5rem',
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.785rem',
+              fontSize: '0.775rem',
               color: 'var(--text-muted)',
             }}
           >
-            <Terminal size={14} style={{ color: 'var(--accent-primary)' }} />
-            <span>Digital Profile & Archive • Press [Cmd/Ctrl + K] for command palette</span>
+            <Terminal size={14} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+            <span>Digital Profile & Archive</span>
           </div>
         </div>
       </div>
