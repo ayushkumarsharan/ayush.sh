@@ -1,0 +1,44 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0e1116"/>
+  
+  <!-- Subtle ambient glow circle -->
+  <circle cx="1000" cy="180" r="300" fill="#14b8a6" opacity="0.12" filter="blur(60px)"/>
+  
+  <!-- Inner Border Frame -->
+  <rect x="40" y="40" width="1120" height="550" rx="20" fill="none" stroke="#14b8a6" stroke-opacity="0.25" stroke-width="1.5"/>
+  
+  <!-- Monogram Pill -->
+  <rect x="80" y="80" width="44" height="44" rx="8" fill="#14b8a6"/>
+  <text x="102" y="112" font-family="'JetBrains Mono', monospace" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle">A</text>
+  
+  <!-- Subtitle Tag -->
+  <text x="140" y="108" font-family="'JetBrains Mono', monospace" font-size="18" fill="#9ca3af">AYUSH KUMAR SHARAN • DIGITAL PROFILE</text>
+  
+  <!-- Main Name Title -->
+  <text x="80" y="240" font-family="Georgia, serif" font-size="64" font-weight="bold" fill="#f3f4f6">Ayush Kumar Sharan</text>
+  
+  <!-- Identity Line -->
+  <text x="80" y="300" font-family="'Inter', sans-serif" font-size="26" fill="#14b8a6">Systems &amp; Automation Engineer • IEEE Published • Gold Medallist</text>
+  
+  <!-- Summary Text -->
+  <text x="80" y="360" font-family="'Inter', sans-serif" font-size="20" fill="#9ca3af">QA Automation • Cloud DevOps • Quantum Signal Processing • Creative Tech</text>
+  
+  <!-- Metrics Pills -->
+  <g transform="translate(80, 430)">
+    <rect width="200" height="70" rx="10" fill="#141820" stroke="#2dd4bf" stroke-opacity="0.3"/>
+    <text x="24" y="36" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="bold" fill="#14b8a6">M2P Fintech</text>
+    <text x="24" y="56" font-family="'Inter', sans-serif" font-size="14" fill="#6b7280">QA Automation</text>
+  </g>
+  
+  <g transform="translate(300, 430)">
+    <rect width="200" height="70" rx="10" fill="#141820" stroke="#f59e0b" stroke-opacity="0.3"/>
+    <text x="24" y="36" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="bold" fill="#f59e0b">IEEE Xplore</text>
+    <text x="24" y="56" font-family="'Inter', sans-serif" font-size="14" fill="#6b7280">Best Paper 2024</text>
+  </g>
+
+  <g transform="translate(520, 430)">
+    <rect width="200" height="70" rx="10" fill="#141820" stroke="#2dd4bf" stroke-opacity="0.3"/>
+    <text x="24" y="36" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="bold" fill="#14b8a6">Gold Medal</text>
+    <text x="24" y="56" font-family="'Inter', sans-serif" font-size="14" fill="#6b7280">Amity University</text>
+  </g>
+</svg>

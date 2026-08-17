@@ -1,0 +1,39 @@
+@import '../styles/tokens.css';
+@import '../styles/reset.css';
+@import '../styles/base.css';
+@import '../styles/animations.css';
+@import '../styles/layout.css';
+
+/* Inter & DM Serif Display Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Hover Micro-interactions */
+.card-hover-active:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.btn-hover-effect:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-hover-effect:active {
+  transform: translateY(0);
+}
+
+.nav-link-item:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-surface-elevated) !important;
+}
+
+.cmd-trigger-btn:hover {
+  border-color: var(--accent-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--accent-primary) !important;
+  transform: scale(1.05);
+}
