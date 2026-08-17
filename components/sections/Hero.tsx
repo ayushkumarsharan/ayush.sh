@@ -6,7 +6,6 @@ import { ArrowRight, FileText, Sparkles, Terminal, Activity, Layers } from 'luci
 import { profile } from '@/content/profile';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { HeroAmbientCanvas } from '@/components/features/HeroAmbientCanvas';
 
 export const Hero: React.FC = () => {
   const [taglineIndex, setTaglineIndex] = useState(0);
@@ -45,9 +44,6 @@ export const Hero: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* Real-Time Ambient Interactive Wave Canvas */}
-      <HeroAmbientCanvas />
-
       {/* Organic Ambient Slow-Morphing Backdrop Glow */}
       <div
         style={{

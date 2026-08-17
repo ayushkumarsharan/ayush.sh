@@ -20,27 +20,37 @@ export const LivingAtmosphereCanvas: React.FC = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
     let animationId: number;
-    let dpr = Math.min(window.devicePixelRatio || 1, 2.5); // Crisp Retina scaling
     let width = window.innerWidth;
     let height = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 3); // Full native Retina / OLED scaling
 
     const setupCanvasSize = () => {
       if (!canvas || !ctx) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      dpr = Math.min(window.devicePixelRatio || 1, 3);
       width = window.innerWidth;
       height = window.innerHeight;
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+      
+      // Native internal buffer resolution
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      
+      // Explicit CSS display dimensions
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform matrix
       ctx.scale(dpr, dpr);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
     };
 
     setupCanvasSize();
     window.addEventListener('resize', setupCanvasSize);
+    window.addEventListener('orientationchange', setupCanvasSize);
 
     // Pointer coordinates (Mouse + Multi-Touch)
     let pointer = {
@@ -108,8 +118,8 @@ export const LivingAtmosphereCanvas: React.FC = () => {
         x,
         y,
         radius: 6,
-        maxRadius: width < 768 ? 140 : 200,
-        alpha: 0.75,
+        maxRadius: width < 768 ? 150 : 200,
+        alpha: 0.8,
       });
       lastInteractionTime = Date.now();
     };
@@ -126,9 +136,9 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('click', handleClick);
 
-    // Initialize lively particles tailored for screen density
+    // Initialize lively particles tailored for crisp high-density screens
     const isMobile = width < 768;
-    const particleCount = isMobile ? 38 : Math.min(70, Math.floor((width * height) / 20000));
+    const particleCount = isMobile ? 42 : Math.min(75, Math.floor((width * height) / 18000));
     const particles: Particle[] = [];
 
     const colors = [
@@ -139,7 +149,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     ];
 
     for (let i = 0; i < particleCount; i++) {
-      const baseR = isMobile ? Math.random() * 2.2 + 1.5 : Math.random() * 2.4 + 1.3;
+      const baseR = isMobile ? Math.random() * 1.8 + 1.2 : Math.random() * 2.2 + 1.2;
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
@@ -148,7 +158,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
         radius: baseR,
         baseRadius: baseR,
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: isMobile ? Math.random() * 0.4 + 0.45 : Math.random() * 0.5 + 0.35,
+        alpha: isMobile ? Math.random() * 0.45 + 0.5 : Math.random() * 0.5 + 0.35,
         pulsePhase: Math.random() * Math.PI * 2,
       });
     }
@@ -172,29 +182,29 @@ export const LivingAtmosphereCanvas: React.FC = () => {
       // 1. Fluid Ambient Harmonic Filaments
       ctx.lineWidth = isMobile ? 1.0 : 1.2;
       for (let wave = 0; wave < (isMobile ? 2 : 3); wave++) {
-        const offset = wave * (isMobile ? 300 : 220);
+        const offset = wave * (isMobile ? 320 : 220);
         const waveY = (height * 0.25 + offset + Math.sin(time * 0.8 + wave) * 50) % height;
 
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 12) {
+        for (let x = 0; x <= width; x += 10) {
           const y = waveY + Math.sin(x * 0.005 + time * 1.1 + wave) * 30 + Math.cos(x * 0.01 - time * 0.7) * 16;
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = `rgba(20, 184, 166, ${isMobile ? 0.09 : 0.08})`;
+        ctx.strokeStyle = `rgba(20, 184, 166, ${isMobile ? 0.11 : 0.08})`;
         ctx.stroke();
       }
 
       // 2. Render shockwaves (Touch taps & Clicks)
       for (let i = shockwaves.length - 1; i >= 0; i--) {
         const sw = shockwaves[i];
-        sw.radius += isMobile ? 3.5 : 4.2;
+        sw.radius += isMobile ? 3.8 : 4.2;
         sw.alpha *= 0.93;
 
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
         ctx.strokeStyle = `rgba(45, 212, 191, ${sw.alpha})`;
-        ctx.lineWidth = isMobile ? 2.2 : 2.5;
+        ctx.lineWidth = isMobile ? 2.0 : 2.5;
         ctx.stroke();
 
         if (sw.alpha < 0.02 || sw.radius > sw.maxRadius) {
@@ -208,7 +218,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
 
         // Idle breathing harmonic pulse
         p.pulsePhase += 0.035;
-        const pulse = Math.sin(p.pulsePhase) * 0.45 + 1;
+        const pulse = Math.sin(p.pulsePhase) * 0.4 + 1;
         p.radius = p.baseRadius * pulse;
 
         // Position drift + vertical scroll drift
@@ -234,34 +244,39 @@ export const LivingAtmosphereCanvas: React.FC = () => {
             p.y += (dy / distPointer) * force * 2.8;
 
             // Direct laser connection to fingertip / mouse
-            const laserAlpha = (1 - distPointer / pointer.radius) * (isMobile ? 0.65 : 0.55);
+            const laserAlpha = (1 - distPointer / pointer.radius) * (isMobile ? 0.7 : 0.55);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(pointer.x, pointer.y);
             ctx.strokeStyle = `rgba(45, 212, 191, ${laserAlpha})`;
-            ctx.lineWidth = isMobile ? 1.2 : 1;
+            ctx.lineWidth = isMobile ? 1.1 : 1;
             ctx.stroke();
           }
         }
 
-        // Draw Glowing Particle Node
+        // Draw Pin-Sharp Glowing Particle Node
         ctx.beginPath();
         const currentAlpha = pointer.isActive && distPointer < pointer.radius ? Math.min(1, p.alpha + 0.45) : p.alpha;
-        ctx.fillStyle = `${p.color} ${currentAlpha})`;
-        ctx.shadowColor = 'rgba(20, 184, 166, 0.6)';
-        ctx.shadowBlur = p.radius * (isMobile ? 4 : 3);
+        
+        // Outer soft glow
+        ctx.fillStyle = `${p.color} ${currentAlpha * 0.7})`;
+        ctx.arc(p.x, p.y, p.radius * 1.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner solid crisp core
+        ctx.beginPath();
+        ctx.fillStyle = `${p.color} ${Math.min(1, currentAlpha * 1.2)})`;
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0; // Reset
 
         // 4. Inter-particle constellation web
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          const maxDist = isMobile ? 100 : (isIdle ? 115 : 140);
+          const maxDist = isMobile ? 105 : (isIdle ? 115 : 140);
 
           if (dist < maxDist) {
-            const lineAlpha = (1 - dist / maxDist) * (isMobile ? 0.28 : (isIdle ? 0.18 : 0.32));
+            const lineAlpha = (1 - dist / maxDist) * (isMobile ? 0.32 : (isIdle ? 0.18 : 0.32));
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
@@ -279,6 +294,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
 
     return () => {
       window.removeEventListener('resize', setupCanvasSize);
+      window.removeEventListener('orientationchange', setupCanvasSize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
       window.removeEventListener('touchstart', handleTouchStart);
@@ -310,6 +326,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
           width: '100%',
           height: '100%',
           display: 'block',
+          imageRendering: '-webkit-optimize-contrast',
         }}
       />
     </div>
