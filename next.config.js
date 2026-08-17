@@ -2,10 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  output: 'export',
   images: {
     unoptimized: true,
   },
-  // Supports standalone or static export deployment effortlessly
 };
 
 module.exports = nextConfig;
