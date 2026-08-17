@@ -68,13 +68,11 @@ export const Hero: React.FC = () => {
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: '940px' }}>
-          {/* Refined Symmetrical Live Telemetry Card Badge */}
+          {/* Fully Rounded Pill Telemetry Badge */}
           <div
             style={{
               display: 'inline-flex',
-              flexDirection: 'column',
-              gap: '0.4rem',
-              marginBottom: 'var(--space-6)',
+              marginBottom: 'var(--space-8)',
               maxWidth: '100%',
             }}
           >
@@ -84,21 +82,21 @@ export const Hero: React.FC = () => {
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 gap: '0.5rem',
-                padding: '0.4rem 0.85rem',
-                borderRadius: 'var(--radius-md)',
+                padding: '0.35rem 0.5rem 0.35rem 0.95rem',
+                borderRadius: 'var(--radius-full)',
                 backgroundColor: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-medium)',
                 boxShadow: 'var(--shadow-sm)',
-                backdropFilter: 'blur(12px)',
+                backdropFilter: 'blur(16px)',
                 width: 'fit-content',
                 maxWidth: '100%',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
                 <span
                   style={{
-                    width: '8px',
-                    height: '8px',
+                    width: '7px',
+                    height: '7px',
                     borderRadius: '50%',
                     backgroundColor: 'var(--accent-primary)',
                     boxShadow: '0 0 8px var(--accent-primary)',
@@ -109,7 +107,7 @@ export const Hero: React.FC = () => {
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 'clamp(0.725rem, 2.2vw, 0.8rem)',
+                    fontSize: 'clamp(0.725rem, 2.2vw, 0.785rem)',
                     color: 'var(--text-secondary)',
                     lineHeight: 1.4,
                   }}
@@ -122,9 +120,9 @@ export const Hero: React.FC = () => {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.3rem',
-                  padding: '0.15rem 0.5rem',
-                  borderRadius: 'var(--radius-sm)',
+                  gap: '0.35rem',
+                  padding: '0.2rem 0.65rem',
+                  borderRadius: 'var(--radius-full)',
                   backgroundColor: 'var(--accent-subtle)',
                   border: '1px solid var(--accent-border)',
                   fontFamily: 'var(--font-mono)',
@@ -133,7 +131,7 @@ export const Hero: React.FC = () => {
                   flexShrink: 0,
                 }}
               >
-                <Activity size={11} />
+                <Activity size={12} />
                 <span>{liveLatency}ms latency</span>
               </div>
             </div>
@@ -179,27 +177,27 @@ export const Hero: React.FC = () => {
             </p>
           </div>
 
-          {/* Summary Narrative */}
+          {/* Summary Narrative with Generous Breathing Room */}
           <p
             style={{
-              fontSize: 'clamp(1rem, 1.25vw, 1.225rem)',
+              fontSize: 'clamp(1.025rem, 1.3vw, 1.225rem)',
               color: 'var(--text-secondary)',
-              lineHeight: 1.7,
+              lineHeight: 1.75,
               maxWidth: '740px',
-              marginBottom: 'var(--space-10)',
+              marginBottom: 'clamp(2rem, 4.5vw, 3rem)',
             }}
           >
             Systems & Automation Engineer engineering high-reliability test architectures and cloud infrastructure across fintech and aviation. University Gold Medallist with a deep curiosity for quantum networking, 3D technology, and thoughtful design.
           </p>
 
-          {/* Primary CTA Buttons */}
+          {/* Primary CTA Buttons with Spacious Margins */}
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
               alignItems: 'center',
-              gap: '0.85rem',
-              marginBottom: 'var(--space-12)',
+              gap: '1rem',
+              marginBottom: 'clamp(2.5rem, 5.5vw, 3.5rem)',
             }}
           >
             <Button
