@@ -24,6 +24,8 @@ export const Card: React.FC<CardProps> = ({
       position: 'relative',
       overflow: 'hidden',
       transition: 'all var(--transition-normal)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
       ...style,
     };
 

@@ -6,6 +6,7 @@ import { ScrollProgress } from '@/components/layout/ScrollProgress';
 import { CustomCursor } from '@/components/ui/CustomCursor';
 import { EasterEggModal } from '@/components/ui/EasterEggModal';
 import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
+import { LivingAtmosphereCanvas } from '@/components/features/LivingAtmosphereCanvas';
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
     creator: '@ayushsharan',
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.svg',
   },
 };
 
@@ -104,8 +105,13 @@ export default function RootLayout({
         <CustomCursor />
         <EasterEggModal />
 
+        {/* Continuous Living Atmosphere Background Canvas */}
+        <LivingAtmosphereCanvas />
+
         <LayoutWrapper>
-          <main id="main-content">{children}</main>
+          <main id="main-content" style={{ position: 'relative', zIndex: 1 }}>
+            {children}
+          </main>
         </LayoutWrapper>
       </body>
     </html>
