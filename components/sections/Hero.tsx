@@ -68,10 +68,12 @@ export const Hero: React.FC = () => {
 
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: '940px' }}>
-          {/* Fully Rounded Pill Telemetry Badge (Matching Header Design Language) */}
+          {/* Refined Symmetrical Live Telemetry Card Badge */}
           <div
             style={{
               display: 'inline-flex',
+              flexDirection: 'column',
+              gap: '0.4rem',
               marginBottom: 'var(--space-6)',
               maxWidth: '100%',
             }}
@@ -82,21 +84,21 @@ export const Hero: React.FC = () => {
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 gap: '0.5rem',
-                padding: '0.35rem 0.5rem 0.35rem 0.95rem',
-                borderRadius: 'var(--radius-full)',
+                padding: '0.4rem 0.85rem',
+                borderRadius: 'var(--radius-md)',
                 backgroundColor: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-medium)',
                 boxShadow: 'var(--shadow-sm)',
-                backdropFilter: 'blur(16px)',
+                backdropFilter: 'blur(12px)',
                 width: 'fit-content',
                 maxWidth: '100%',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', minWidth: 0 }}>
                 <span
                   style={{
-                    width: '7px',
-                    height: '7px',
+                    width: '8px',
+                    height: '8px',
                     borderRadius: '50%',
                     backgroundColor: 'var(--accent-primary)',
                     boxShadow: '0 0 8px var(--accent-primary)',
@@ -107,7 +109,7 @@ export const Hero: React.FC = () => {
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 'clamp(0.725rem, 2.2vw, 0.785rem)',
+                    fontSize: 'clamp(0.725rem, 2.2vw, 0.8rem)',
                     color: 'var(--text-secondary)',
                     lineHeight: 1.4,
                   }}
@@ -120,9 +122,9 @@ export const Hero: React.FC = () => {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: 'var(--radius-full)',
+                  gap: '0.3rem',
+                  padding: '0.15rem 0.5rem',
+                  borderRadius: 'var(--radius-sm)',
                   backgroundColor: 'var(--accent-subtle)',
                   border: '1px solid var(--accent-border)',
                   fontFamily: 'var(--font-mono)',
@@ -131,7 +133,7 @@ export const Hero: React.FC = () => {
                   flexShrink: 0,
                 }}
               >
-                <Activity size={12} />
+                <Activity size={11} />
                 <span>{liveLatency}ms latency</span>
               </div>
             </div>
