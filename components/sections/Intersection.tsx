@@ -23,13 +23,13 @@ export const Intersection: React.FC = () => {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 'var(--space-8)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+            gap: 'var(--space-6)',
             alignItems: 'start',
           }}
         >
           {/* Interactive Topology Node Selector */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
@@ -43,15 +43,15 @@ export const Intersection: React.FC = () => {
                 gap: '0.4rem',
               }}
             >
-              <Activity size={14} style={{ color: 'var(--accent-primary)' }} />
-              <span>Select any conceptual node to explore connections</span>
+              <Activity size={14} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+              <span>Select any conceptual node to explore</span>
             </div>
 
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-                gap: '0.625rem',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 130px), 1fr))',
+                gap: '0.5rem',
               }}
             >
               {intersectionNodes.map((node) => {
@@ -63,7 +63,7 @@ export const Intersection: React.FC = () => {
                     key={node.id}
                     onClick={() => setSelectedNode(node)}
                     style={{
-                      padding: '0.875rem 1rem',
+                      padding: '0.75rem 0.85rem',
                       borderRadius: 'var(--radius-md)',
                       backgroundColor: isSelected
                         ? 'var(--accent-primary)'
@@ -84,21 +84,22 @@ export const Intersection: React.FC = () => {
                       cursor: 'pointer',
                       transition: 'all var(--transition-fast)',
                       boxShadow: isSelected ? 'var(--shadow-glow)' : 'none',
+                      minWidth: 0,
                     }}
                     className="interactive-hover"
                   >
                     <div
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '0.7rem',
-                        opacity: isSelected ? 0.9 : 0.6,
-                        marginBottom: '0.2rem',
+                        fontSize: '0.675rem',
+                        opacity: isSelected ? 0.9 : 0.65,
+                        marginBottom: '0.15rem',
                         textTransform: 'uppercase',
                       }}
                     >
                       {node.category}
                     </div>
-                    <div style={{ fontWeight: 600, fontSize: '0.925rem' }}>{node.label}</div>
+                    <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{node.label}</div>
                   </button>
                 );
               })}
@@ -117,10 +118,11 @@ export const Intersection: React.FC = () => {
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
+              minWidth: 0,
             }}
           >
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-3)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-3)', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <Badge variant="accent" size="sm">
                   {selectedNode.category.toUpperCase()}
                 </Badge>
@@ -132,7 +134,7 @@ export const Intersection: React.FC = () => {
               <h3
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '1.85rem',
+                  fontSize: 'clamp(1.4rem, 4vw, 1.85rem)',
                   color: 'var(--text-primary)',
                   marginBottom: 'var(--space-1)',
                 }}
@@ -143,7 +145,7 @@ export const Intersection: React.FC = () => {
               <div
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '1rem',
+                  fontSize: '0.95rem',
                   color: 'var(--accent-primary)',
                   fontWeight: 500,
                   marginBottom: 'var(--space-4)',
@@ -154,7 +156,7 @@ export const Intersection: React.FC = () => {
 
               <p
                 style={{
-                  fontSize: '0.95rem',
+                  fontSize: '0.925rem',
                   color: 'var(--text-secondary)',
                   lineHeight: 1.65,
                   marginBottom: 'var(--space-6)',
@@ -176,7 +178,7 @@ export const Intersection: React.FC = () => {
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.725rem',
+                    fontSize: '0.7rem',
                     color: 'var(--text-tertiary)',
                     textTransform: 'uppercase',
                     marginBottom: '0.2rem',
@@ -184,7 +186,7 @@ export const Intersection: React.FC = () => {
                 >
                   Demonstrated Real-World Evidence
                 </div>
-                <div style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 500, lineHeight: 1.5 }}>
                   {selectedNode.evidence}
                 </div>
               </div>
@@ -195,7 +197,7 @@ export const Intersection: React.FC = () => {
               <div
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.725rem',
+                  fontSize: '0.7rem',
                   color: 'var(--text-tertiary)',
                   textTransform: 'uppercase',
                   marginBottom: '0.4rem',
