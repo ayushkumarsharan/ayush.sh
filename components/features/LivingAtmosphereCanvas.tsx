@@ -12,7 +12,6 @@ interface Particle {
   color: string;
   alpha: number;
   pulsePhase: number;
-  orbitSpeed: number;
 }
 
 export const LivingAtmosphereCanvas: React.FC = () => {
@@ -25,145 +24,177 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     if (!ctx) return;
 
     let animationId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let dpr = Math.min(window.devicePixelRatio || 1, 2.5); // Crisp Retina scaling
+    let width = window.innerWidth;
+    let height = window.innerHeight;
 
-    const handleResize = () => {
-      if (!canvas) return;
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const setupCanvasSize = () => {
+      if (!canvas || !ctx) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+      ctx.scale(dpr, dpr);
     };
 
-    window.addEventListener('resize', handleResize);
+    setupCanvasSize();
+    window.addEventListener('resize', setupCanvasSize);
 
-    // Mouse coordinates
-    let mouse = {
+    // Pointer coordinates (Mouse + Multi-Touch)
+    let pointer = {
       x: -1000,
       y: -1000,
       targetX: -1000,
       targetY: -1000,
       isActive: false,
-      radius: 200,
+      radius: width < 768 ? 160 : 220,
     };
 
     let lastInteractionTime = Date.now();
-    let scrollOffset = 0;
     let scrollVelocity = 0;
     let lastScrollY = window.scrollY;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.targetX = e.clientX;
-      mouse.targetY = e.clientY;
-      mouse.isActive = true;
+    const updatePointerPos = (clientX: number, clientY: number) => {
+      pointer.targetX = clientX;
+      pointer.targetY = clientY;
+      pointer.isActive = true;
       lastInteractionTime = Date.now();
     };
 
+    const handleMouseMove = (e: MouseEvent) => {
+      updatePointerPos(e.clientX, e.clientY);
+    };
+
     const handleMouseLeave = () => {
-      mouse.targetX = -1000;
-      mouse.targetY = -1000;
-      mouse.isActive = false;
+      pointer.targetX = -1000;
+      pointer.targetY = -1000;
+      pointer.isActive = false;
+    };
+
+    // Full Mobile Touch Support
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
+        createShockwave(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      setTimeout(() => {
+        pointer.isActive = false;
+      }, 800);
     };
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      scrollVelocity = (currentScrollY - lastScrollY) * 0.15;
+      scrollVelocity = (currentScrollY - lastScrollY) * 0.18;
       lastScrollY = currentScrollY;
       lastInteractionTime = Date.now();
     };
 
-    // Click wave shockwave
+    // Click / Touch Shockwaves
     const shockwaves: { x: number; y: number; radius: number; maxRadius: number; alpha: number }[] = [];
 
-    const handleClick = (e: MouseEvent) => {
+    const createShockwave = (x: number, y: number) => {
       shockwaves.push({
-        x: e.clientX,
-        y: e.clientY,
-        radius: 5,
-        maxRadius: 180,
-        alpha: 0.6,
+        x,
+        y,
+        radius: 6,
+        maxRadius: width < 768 ? 140 : 200,
+        alpha: 0.75,
       });
       lastInteractionTime = Date.now();
     };
 
+    const handleClick = (e: MouseEvent) => {
+      createShockwave(e.clientX, e.clientY);
+    };
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('click', handleClick);
 
-    // Initialize lively particles
-    const particleCount = Math.min(65, Math.floor((width * height) / 22000));
+    // Initialize lively particles tailored for screen density
+    const isMobile = width < 768;
+    const particleCount = isMobile ? 38 : Math.min(70, Math.floor((width * height) / 20000));
     const particles: Particle[] = [];
 
     const colors = [
-      'rgba(20, 184, 166,',   // Teal Primary
-      'rgba(45, 212, 191,',   // Teal Bright
-      'rgba(13, 148, 136,',   // Teal Deep
-      'rgba(245, 158, 11,',   // Warm Amber Accent
-      'rgba(56, 189, 248,',   // Electric Cyan
+      'rgba(20, 184, 166,',  // Teal Primary
+      'rgba(45, 212, 191,',  // Teal Bright
+      'rgba(14, 165, 233,',  // Electric Sky Blue
+      'rgba(245, 158, 11,',  // Warm Amber
     ];
 
     for (let i = 0; i < particleCount; i++) {
-      const baseR = Math.random() * 2.2 + 1.2;
+      const baseR = isMobile ? Math.random() * 2.2 + 1.5 : Math.random() * 2.4 + 1.3;
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.7,
-        vy: (Math.random() - 0.5) * 0.7,
+        vx: (Math.random() - 0.5) * (isMobile ? 0.6 : 0.7),
+        vy: (Math.random() - 0.5) * (isMobile ? 0.6 : 0.7),
         radius: baseR,
         baseRadius: baseR,
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + 0.35,
+        alpha: isMobile ? Math.random() * 0.4 + 0.45 : Math.random() * 0.5 + 0.35,
         pulsePhase: Math.random() * Math.PI * 2,
-        orbitSpeed: (Math.random() - 0.5) * 0.02,
       });
     }
 
     let time = 0;
 
     const render = () => {
-      time += 0.018;
+      time += 0.016;
 
-      // Mouse smooth interpolation
-      mouse.x += (mouse.targetX - mouse.x) * 0.12;
-      mouse.y += (mouse.targetY - mouse.y) * 0.12;
+      // Pointer smooth interpolation
+      pointer.x += (pointer.targetX - pointer.x) * 0.14;
+      pointer.y += (pointer.targetY - pointer.y) * 0.14;
 
-      // Scroll decay
-      scrollVelocity *= 0.92;
-      scrollOffset += scrollVelocity;
+      // Scroll physics
+      scrollVelocity *= 0.93;
 
       ctx.clearRect(0, 0, width, height);
 
-      // Check if user has been idle for > 2 seconds
-      const isIdle = Date.now() - lastInteractionTime > 2000;
+      const isIdle = Date.now() - lastInteractionTime > 1800;
 
-      // 1. Draw subtle ambient fluid wave filaments across background
-      ctx.beginPath();
-      ctx.strokeStyle = 'rgba(20, 184, 166, 0.07)';
-      ctx.lineWidth = 1.2;
-
-      for (let wave = 0; wave < 3; wave++) {
-        const offset = wave * 220;
-        const waveY = (height * 0.3 + offset + Math.sin(time + wave) * 60) % height;
+      // 1. Fluid Ambient Harmonic Filaments
+      ctx.lineWidth = isMobile ? 1.0 : 1.2;
+      for (let wave = 0; wave < (isMobile ? 2 : 3); wave++) {
+        const offset = wave * (isMobile ? 300 : 220);
+        const waveY = (height * 0.25 + offset + Math.sin(time * 0.8 + wave) * 50) % height;
 
         ctx.beginPath();
-        for (let x = 0; x < width; x += 15) {
-          const y = waveY + Math.sin(x * 0.004 + time * 1.2 + wave) * 35 + Math.cos(x * 0.008 - time * 0.8) * 20;
+        for (let x = 0; x <= width; x += 12) {
+          const y = waveY + Math.sin(x * 0.005 + time * 1.1 + wave) * 30 + Math.cos(x * 0.01 - time * 0.7) * 16;
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
+        ctx.strokeStyle = `rgba(20, 184, 166, ${isMobile ? 0.09 : 0.08})`;
         ctx.stroke();
       }
 
-      // 2. Render shockwaves from clicks
+      // 2. Render shockwaves (Touch taps & Clicks)
       for (let i = shockwaves.length - 1; i >= 0; i--) {
         const sw = shockwaves[i];
-        sw.radius += 4;
-        sw.alpha *= 0.94;
+        sw.radius += isMobile ? 3.5 : 4.2;
+        sw.alpha *= 0.93;
 
         ctx.beginPath();
         ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
         ctx.strokeStyle = `rgba(45, 212, 191, ${sw.alpha})`;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = isMobile ? 2.2 : 2.5;
         ctx.stroke();
 
         if (sw.alpha < 0.02 || sw.radius > sw.maxRadius) {
@@ -175,67 +206,67 @@ export const LivingAtmosphereCanvas: React.FC = () => {
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
-        // Idle harmonic breathing
-        p.pulsePhase += 0.03;
-        const pulse = Math.sin(p.pulsePhase) * 0.5 + 1;
+        // Idle breathing harmonic pulse
+        p.pulsePhase += 0.035;
+        const pulse = Math.sin(p.pulsePhase) * 0.45 + 1;
         p.radius = p.baseRadius * pulse;
 
-        // Base velocity drift
+        // Position drift + vertical scroll drift
         p.x += p.vx;
-        p.y += p.vy + scrollVelocity * 0.2;
+        p.y += p.vy + scrollVelocity * 0.25;
 
-        // Wrap around screen boundaries
+        // Screen boundary wrap
         if (p.x < -20) p.x = width + 20;
         if (p.x > width + 20) p.x = -20;
         if (p.y < -20) p.y = height + 20;
         if (p.y > height + 20) p.y = -20;
 
-        // Interactive mouse gravity & connection
-        let distMouse = 9999;
-        if (mouse.isActive) {
-          const dx = mouse.x - p.x;
-          const dy = mouse.y - p.y;
-          distMouse = Math.hypot(dx, dy);
+        // Pointer Gravity & Direct Laser Connection
+        let distPointer = 9999;
+        if (pointer.isActive) {
+          const dx = pointer.x - p.x;
+          const dy = pointer.y - p.y;
+          distPointer = Math.hypot(dx, dy);
 
-          if (distMouse < mouse.radius) {
-            const force = (1 - distMouse / mouse.radius) * 1.5;
-            p.x += (dx / distMouse) * force * 2.5;
-            p.y += (dy / distMouse) * force * 2.5;
+          if (distPointer < pointer.radius) {
+            const force = (1 - distPointer / pointer.radius) * 1.6;
+            p.x += (dx / distPointer) * force * 2.8;
+            p.y += (dy / distPointer) * force * 2.8;
 
-            // Draw direct laser filament to cursor
-            const laserAlpha = (1 - distMouse / mouse.radius) * 0.5;
+            // Direct laser connection to fingertip / mouse
+            const laserAlpha = (1 - distPointer / pointer.radius) * (isMobile ? 0.65 : 0.55);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
-            ctx.lineTo(mouse.x, mouse.y);
+            ctx.lineTo(pointer.x, pointer.y);
             ctx.strokeStyle = `rgba(45, 212, 191, ${laserAlpha})`;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = isMobile ? 1.2 : 1;
             ctx.stroke();
           }
         }
 
-        // Draw particle glow
+        // Draw Glowing Particle Node
         ctx.beginPath();
-        const currentAlpha = mouse.isActive && distMouse < mouse.radius ? Math.min(1, p.alpha + 0.4) : p.alpha;
+        const currentAlpha = pointer.isActive && distPointer < pointer.radius ? Math.min(1, p.alpha + 0.45) : p.alpha;
         ctx.fillStyle = `${p.color} ${currentAlpha})`;
-        ctx.shadowColor = 'rgba(20, 184, 166, 0.4)';
-        ctx.shadowBlur = p.radius * 3;
+        ctx.shadowColor = 'rgba(20, 184, 166, 0.6)';
+        ctx.shadowBlur = p.radius * (isMobile ? 4 : 3);
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0; // Reset
 
-        // 4. Inter-particle constellation lines
+        // 4. Inter-particle constellation web
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          const maxDist = isIdle ? 110 : 135;
+          const maxDist = isMobile ? 100 : (isIdle ? 115 : 140);
 
           if (dist < maxDist) {
-            const lineAlpha = (1 - dist / maxDist) * (isIdle ? 0.16 : 0.28);
+            const lineAlpha = (1 - dist / maxDist) * (isMobile ? 0.28 : (isIdle ? 0.18 : 0.32));
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = `rgba(20, 184, 166, ${lineAlpha})`;
-            ctx.lineWidth = 0.8;
+            ctx.lineWidth = isMobile ? 0.9 : 0.8;
             ctx.stroke();
           }
         }
@@ -247,9 +278,12 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     render();
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', setupCanvasSize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('click', handleClick);
       cancelAnimationFrame(animationId);
