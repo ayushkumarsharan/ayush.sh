@@ -16,7 +16,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 40) {
+      if (window.scrollY > 20) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -46,10 +46,14 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           top: 0,
           left: 0,
           right: 0,
-          zIndex: 9990,
-          padding: isScrolled ? '0.75rem 1.5rem' : '1.25rem 1.5rem',
+          zIndex: 9999,
+          padding: isScrolled ? '0.65rem 1rem' : '0.9rem 1.25rem',
+          backgroundColor: 'var(--bg-translucent)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: isScrolled ? '1px solid var(--border-medium)' : '1px solid var(--border-subtle)',
+          boxShadow: isScrolled ? 'var(--shadow-md)' : 'none',
           transition: 'all var(--transition-normal)',
-          pointerEvents: 'none',
         }}
       >
         <div
@@ -60,21 +64,16 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             justifyContent: 'space-between',
           }}
         >
-          {/* Brand Wordmark / Monogram */}
+          {/* Brand Wordmark & Active Pulse */}
           <Link
             href="/"
             style={{
-              pointerEvents: 'auto',
               display: 'flex',
               alignItems: 'center',
               gap: '0.625rem',
               textDecoration: 'none',
-              padding: '0.4rem 0.75rem',
+              padding: '0.35rem 0.6rem',
               borderRadius: 'var(--radius-md)',
-              backgroundColor: isScrolled ? 'var(--bg-translucent)' : 'transparent',
-              backdropFilter: isScrolled ? 'blur(12px)' : 'none',
-              border: isScrolled ? '1px solid var(--border-subtle)' : '1px solid transparent',
-              boxShadow: isScrolled ? 'var(--shadow-sm)' : 'none',
               transition: 'all var(--transition-fast)',
             }}
           >
@@ -91,36 +90,61 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 fontFamily: 'var(--font-mono)',
                 fontWeight: 700,
                 fontSize: '0.85rem',
+                boxShadow: '0 0 12px var(--accent-glow)',
               }}
             >
               A
             </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.01em',
-              }}
-            >
-              Ayush Sharan
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 600,
+                  fontSize: '0.925rem',
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.2,
+                }}
+              >
+                Ayush Sharan
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.1rem' }}>
+                <span
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--accent-primary)',
+                    boxShadow: '0 0 6px var(--accent-primary)',
+                  }}
+                  className="pulse-dot"
+                />
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.65rem',
+                    color: 'var(--accent-primary)',
+                    letterSpacing: '0.04em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Active
+                </span>
+              </div>
+            </div>
           </Link>
 
-          {/* Desktop Floating Pill Menu */}
+          {/* Desktop Floating Navigation Links */}
           <nav
             style={{
-              pointerEvents: 'auto',
               display: 'none',
               alignItems: 'center',
-              gap: '0.25rem',
-              padding: '0.35rem 0.5rem',
-              backgroundColor: 'var(--bg-translucent)',
-              backdropFilter: 'blur(16px)',
+              gap: '0.2rem',
+              padding: '0.3rem 0.4rem',
+              backgroundColor: 'var(--bg-surface-elevated)',
               borderRadius: 'var(--radius-full)',
               border: '1px solid var(--border-medium)',
-              boxShadow: 'var(--shadow-md)',
+              boxShadow: 'var(--shadow-sm)',
             }}
             className="desktop-nav"
           >
@@ -135,17 +159,17 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                   key={link.href}
                   href={link.href}
                   style={{
-                    padding: '0.45rem 0.85rem',
-                    fontSize: '0.85rem',
+                    padding: '0.4rem 0.8rem',
+                    fontSize: '0.825rem',
                     fontWeight: 500,
                     color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
                     borderRadius: 'var(--radius-full)',
-                    backgroundColor: isActive ? 'var(--bg-surface-elevated)' : 'transparent',
+                    backgroundColor: isActive ? 'var(--bg-surface)' : 'transparent',
                     border: isActive ? '1px solid var(--border-subtle)' : '1px solid transparent',
                     transition: 'all var(--transition-fast)',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.375rem',
+                    gap: '0.35rem',
                     position: 'relative',
                   }}
                   className="nav-link-item"
@@ -154,7 +178,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                   {link.badge && (
                     <span
                       style={{
-                        fontSize: '0.65rem',
+                        fontSize: '0.625rem',
                         fontFamily: 'var(--font-mono)',
                         padding: '0.1rem 0.35rem',
                         borderRadius: 'var(--radius-full)',
@@ -171,13 +195,12 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             })}
           </nav>
 
-          {/* Action Tools (Cmd+K, Theme Toggle, Mobile Menu) */}
+          {/* Action Tools (Cmd+K, Ask AI, Theme Toggle, Mobile Menu) */}
           <div
             style={{
-              pointerEvents: 'auto',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.45rem',
             }}
           >
             {/* Command Palette Trigger */}
@@ -189,10 +212,9 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
-                padding: '0.45rem 0.75rem',
+                padding: '0.4rem 0.7rem',
                 borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--bg-translucent)',
-                backdropFilter: 'blur(12px)',
+                backgroundColor: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-medium)',
                 color: 'var(--text-secondary)',
                 fontSize: '0.8rem',
@@ -205,7 +227,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem' }}>⌘K</span>
             </button>
 
-            {/* Optional Ask AI button */}
+            {/* Ask AI button */}
             {onOpenAskAI && (
               <button
                 onClick={onOpenAskAI}
@@ -215,7 +237,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '0.35rem',
-                  padding: '0.45rem 0.75rem',
+                  padding: '0.4rem 0.75rem',
                   borderRadius: 'var(--radius-full)',
                   backgroundColor: 'var(--accent-subtle)',
                   border: '1px solid var(--accent-border)',
@@ -242,8 +264,8 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '38px',
-                height: '38px',
+                width: '36px',
+                height: '36px',
                 borderRadius: 'var(--radius-full)',
                 backgroundColor: 'var(--bg-surface-elevated)',
                 border: '1px solid var(--border-medium)',
@@ -268,8 +290,8 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             right: 0,
             bottom: 0,
             backgroundColor: 'var(--bg-translucent)',
-            backdropFilter: 'blur(20px)',
-            zIndex: 9980,
+            backdropFilter: 'blur(24px)',
+            zIndex: 9998,
             padding: '5rem 1.5rem 2rem',
             display: 'flex',
             flexDirection: 'column',
@@ -285,7 +307,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{
-                  padding: '1rem 1.25rem',
+                  padding: '0.875rem 1.25rem',
                   fontSize: '1.15rem',
                   fontFamily: 'var(--font-display)',
                   color: 'var(--text-primary)',
@@ -334,6 +356,13 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
       <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
 
       <style jsx global>{`
+        @keyframes pulseGlow {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.4); opacity: 0.6; }
+        }
+        .pulse-dot {
+          animation: pulseGlow 2.5s infinite ease-in-out;
+        }
         @media (min-width: 860px) {
           .desktop-nav {
             display: flex !important;
