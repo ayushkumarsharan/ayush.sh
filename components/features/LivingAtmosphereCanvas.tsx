@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
+import { useUniverse } from '@/lib/UniverseContext';
+import { useMode } from '@/lib/ModeContext';
+import { universeGraph, UniverseNode } from '@/content/universe';
 
-interface Particle {
+interface NodeParticle {
+  id: string;
   x: number;
   y: number;
   vx: number;
@@ -11,11 +15,30 @@ interface Particle {
   baseRadius: number;
   color: string;
   alpha: number;
+  targetAlpha: number;
   pulsePhase: number;
+  isCoordinate: boolean;
+  orbitAngle: number;
 }
 
 export const LivingAtmosphereCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  
+  const { activeNode, hoveredNode, relatedNodes, isLowSignalMode } = useUniverse();
+  const { activeMode } = useMode();
+
+  // Mutable ref to access React state inside the rAF loop without restarting it
+  const stateRef = useRef({
+    activeNode,
+    hoveredNode,
+    relatedNodes,
+    activeMode,
+    isLowSignalMode
+  });
+
+  useEffect(() => {
+    stateRef.current = { activeNode, hoveredNode, relatedNodes, activeMode, isLowSignalMode };
+  }, [activeNode, hoveredNode, relatedNodes, activeMode, isLowSignalMode]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -26,7 +49,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     let animationId: number;
     let width = window.innerWidth;
     let height = window.innerHeight;
-    let dpr = Math.min(window.devicePixelRatio || 1, 3); // Full native Retina / OLED scaling
+    let dpr = Math.min(window.devicePixelRatio || 1, 3);
 
     const setupCanvasSize = () => {
       if (!canvas || !ctx) return;
@@ -34,254 +57,194 @@ export const LivingAtmosphereCanvas: React.FC = () => {
       width = window.innerWidth;
       height = window.innerHeight;
       
-      // Native internal buffer resolution
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
-      
-      // Explicit CSS display dimensions
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       
-      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform matrix
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
     };
 
     setupCanvasSize();
     window.addEventListener('resize', setupCanvasSize);
     window.addEventListener('orientationchange', setupCanvasSize);
 
-    // Pointer coordinates (Mouse + Multi-Touch)
-    let pointer = {
-      x: -1000,
-      y: -1000,
-      targetX: -1000,
-      targetY: -1000,
-      isActive: false,
-      radius: width < 768 ? 160 : 220,
-    };
-
-    let lastInteractionTime = Date.now();
-    let scrollVelocity = 0;
-    let lastScrollY = window.scrollY;
-
-    const updatePointerPos = (clientX: number, clientY: number) => {
-      pointer.targetX = clientX;
-      pointer.targetY = clientY;
-      pointer.isActive = true;
-      lastInteractionTime = Date.now();
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      updatePointerPos(e.clientX, e.clientY);
-    };
-
-    const handleMouseLeave = () => {
-      pointer.targetX = -1000;
-      pointer.targetY = -1000;
-      pointer.isActive = false;
-    };
-
-    // Full Mobile Touch Support
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
-        createShockwave(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    };
-
-    const handleTouchEnd = () => {
-      setTimeout(() => {
-        pointer.isActive = false;
-      }, 800);
-    };
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      scrollVelocity = (currentScrollY - lastScrollY) * 0.18;
-      lastScrollY = currentScrollY;
-      lastInteractionTime = Date.now();
-    };
-
-    // Click / Touch Shockwaves
-    const shockwaves: { x: number; y: number; radius: number; maxRadius: number; alpha: number }[] = [];
-
-    const createShockwave = (x: number, y: number) => {
-      shockwaves.push({
-        x,
-        y,
-        radius: 6,
-        maxRadius: width < 768 ? 150 : 200,
-        alpha: 0.8,
-      });
-      lastInteractionTime = Date.now();
-    };
-
-    const handleClick = (e: MouseEvent) => {
-      createShockwave(e.clientX, e.clientY);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mouseleave', handleMouseLeave);
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('click', handleClick);
-
-    // Initialize lively particles tailored for crisp high-density screens
-    const isMobile = width < 768;
-    const particleCount = isMobile ? 42 : Math.min(75, Math.floor((width * height) / 18000));
-    const particles: Particle[] = [];
-
-    const colors = [
-      'rgba(20, 184, 166,',  // Teal Primary
-      'rgba(45, 212, 191,',  // Teal Bright
-      'rgba(14, 165, 233,',  // Electric Sky Blue
-      'rgba(245, 158, 11,',  // Warm Amber
-    ];
-
-    for (let i = 0; i < particleCount; i++) {
-      const baseR = isMobile ? Math.random() * 1.8 + 1.2 : Math.random() * 2.2 + 1.2;
-      particles.push({
+    // Initialize particles from the Universe Graph
+    const nodes = Object.values(universeGraph);
+    const particles: NodeParticle[] = nodes.map((node) => {
+      const isCoord = node.type === 'mode_coordinate';
+      return {
+        id: node.id,
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * (isMobile ? 0.6 : 0.7),
-        vy: (Math.random() - 0.5) * (isMobile ? 0.6 : 0.7),
-        radius: baseR,
-        baseRadius: baseR,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: isMobile ? Math.random() * 0.45 + 0.5 : Math.random() * 0.5 + 0.35,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        baseRadius: isCoord ? 3 : (node.priority > 8 ? 2.5 : 1.5),
+        radius: 2,
+        color: isCoord ? 'rgba(245, 158, 11,' : 'rgba(20, 184, 166,',
+        alpha: 0,
+        targetAlpha: 0.5,
         pulsePhase: Math.random() * Math.PI * 2,
-      });
-    }
+        isCoordinate: isCoord,
+        orbitAngle: Math.random() * Math.PI * 2,
+      };
+    });
+
+    let pointer = { x: -1000, y: -1000, isActive: false };
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+      pointer.isActive = true;
+    };
+    const handleMouseLeave = () => { pointer.isActive = false; };
+    
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave);
 
     let time = 0;
-
+    
     const render = () => {
       time += 0.016;
-
-      // Pointer smooth interpolation
-      pointer.x += (pointer.targetX - pointer.x) * 0.14;
-      pointer.y += (pointer.targetY - pointer.y) * 0.14;
-
-      // Scroll physics
-      scrollVelocity *= 0.93;
-
       ctx.clearRect(0, 0, width, height);
 
-      const isIdle = Date.now() - lastInteractionTime > 1800;
-
-      // 1. Fluid Ambient Harmonic Filaments
-      ctx.lineWidth = isMobile ? 1.0 : 1.2;
-      for (let wave = 0; wave < (isMobile ? 2 : 3); wave++) {
-        const offset = wave * (isMobile ? 320 : 220);
-        const waveY = (height * 0.25 + offset + Math.sin(time * 0.8 + wave) * 50) % height;
-
-        ctx.beginPath();
-        for (let x = 0; x <= width; x += 10) {
-          const y = waveY + Math.sin(x * 0.005 + time * 1.1 + wave) * 30 + Math.cos(x * 0.01 - time * 0.7) * 16;
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = `rgba(20, 184, 166, ${isMobile ? 0.11 : 0.08})`;
-        ctx.stroke();
+      const state = stateRef.current;
+      
+      // If Low Signal Mode is ON, we drastically reduce rendering
+      if (state.isLowSignalMode) {
+        ctx.fillStyle = 'rgba(20, 184, 166, 0.05)';
+        ctx.fillRect(0, 0, width, height);
+        animationId = requestAnimationFrame(render);
+        return;
       }
 
-      // 2. Render shockwaves (Touch taps & Clicks)
-      for (let i = shockwaves.length - 1; i >= 0; i--) {
-        const sw = shockwaves[i];
-        sw.radius += isMobile ? 3.8 : 4.2;
-        sw.alpha *= 0.93;
+      const targetCenter = state.hoveredNode || state.activeNode;
+      const relatedIds = new Set(state.relatedNodes.map(n => n.id));
 
-        ctx.beginPath();
-        ctx.arc(sw.x, sw.y, sw.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(45, 212, 191, ${sw.alpha})`;
-        ctx.lineWidth = isMobile ? 2.0 : 2.5;
-        ctx.stroke();
-
-        if (sw.alpha < 0.02 || sw.radius > sw.maxRadius) {
-          shockwaves.splice(i, 1);
-        }
-      }
-
-      // 3. Update & render particles
+      // 1. Update Particle Physics & Alpha based on Semantic State
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
+        const node = universeGraph[p.id];
+        
+        // Determine semantic state
+        const isTarget = p.id === targetCenter;
+        const isRelated = relatedIds.has(p.id);
+        const matchesMode = state.activeMode ? node.modes.includes(state.activeMode) : true;
+        const isArrival = !state.activeMode;
 
-        // Idle breathing harmonic pulse
-        p.pulsePhase += 0.035;
-        const pulse = Math.sin(p.pulsePhase) * 0.4 + 1;
-        p.radius = p.baseRadius * pulse;
-
-        // Position drift + vertical scroll drift
-        p.x += p.vx;
-        p.y += p.vy + scrollVelocity * 0.25;
-
-        // Screen boundary wrap
-        if (p.x < -20) p.x = width + 20;
-        if (p.x > width + 20) p.x = -20;
-        if (p.y < -20) p.y = height + 20;
-        if (p.y > height + 20) p.y = -20;
-
-        // Pointer Gravity & Direct Laser Connection
-        let distPointer = 9999;
-        if (pointer.isActive) {
-          const dx = pointer.x - p.x;
-          const dy = pointer.y - p.y;
-          distPointer = Math.hypot(dx, dy);
-
-          if (distPointer < pointer.radius) {
-            const force = (1 - distPointer / pointer.radius) * 1.6;
-            p.x += (dx / distPointer) * force * 2.8;
-            p.y += (dy / distPointer) * force * 2.8;
-
-            // Direct laser connection to fingertip / mouse
-            const laserAlpha = (1 - distPointer / pointer.radius) * (isMobile ? 0.7 : 0.55);
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(pointer.x, pointer.y);
-            ctx.strokeStyle = `rgba(45, 212, 191, ${laserAlpha})`;
-            ctx.lineWidth = isMobile ? 1.1 : 1;
-            ctx.stroke();
+        // Visual Weight Logic
+        if (targetCenter) {
+          if (isTarget) p.targetAlpha = 1.0;
+          else if (isRelated) p.targetAlpha = 0.7;
+          else p.targetAlpha = 0.05;
+        } else {
+          // No specific target focused
+          if (isArrival) {
+            p.targetAlpha = p.isCoordinate ? 0.8 : 0.15;
+          } else {
+            p.targetAlpha = matchesMode ? 0.6 : 0.1;
           }
         }
 
-        // Draw Pin-Sharp Glowing Particle Node
-        ctx.beginPath();
-        const currentAlpha = pointer.isActive && distPointer < pointer.radius ? Math.min(1, p.alpha + 0.45) : p.alpha;
+        // Smooth alpha transition
+        p.alpha += (p.targetAlpha - p.alpha) * 0.05;
+
+        // Physics Forces
+        if (isTarget) {
+          // Pull target gently towards center-right of screen
+          const tx = width * 0.7;
+          const ty = height * 0.5;
+          p.vx += (tx - p.x) * 0.002;
+          p.vy += (ty - p.y) * 0.002;
+        } else if (targetCenter && isRelated) {
+          // Orbit the target node
+          const targetParticle = particles.find(pt => pt.id === targetCenter);
+          if (targetParticle) {
+            p.orbitAngle += 0.005;
+            const orbitRadius = 150 + (node.priority * 10);
+            const tx = targetParticle.x + Math.cos(p.orbitAngle) * orbitRadius;
+            const ty = targetParticle.y + Math.sin(p.orbitAngle) * orbitRadius;
+            p.vx += (tx - p.x) * 0.003;
+            p.vy += (ty - p.y) * 0.003;
+          }
+        } else {
+          // Idle drift
+          p.vx += (Math.random() - 0.5) * 0.02;
+          p.vy += (Math.random() - 0.5) * 0.02;
+        }
+
+        // Friction
+        p.vx *= 0.92;
+        p.vy *= 0.92;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrapping
+        if (p.x < -50) p.x = width + 50;
+        if (p.x > width + 50) p.x = -50;
+        if (p.y < -50) p.y = height + 50;
+        if (p.y > height + 50) p.y = -50;
+
+        // Render Particle
+        if (p.alpha > 0.01) {
+          p.pulsePhase += 0.05;
+          p.radius = p.baseRadius * (1 + Math.sin(p.pulsePhase) * 0.2);
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
+          ctx.fillStyle = `${p.color} ${p.alpha * 0.4})`;
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `${p.color} ${p.alpha})`;
+          ctx.fill();
+        }
+      }
+
+      // 2. Draw Semantic Constellation Lines
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i++) {
+        const p1 = particles[i];
+        if (p1.alpha < 0.05) continue;
         
-        // Outer soft glow
-        ctx.fillStyle = `${p.color} ${currentAlpha * 0.7})`;
-        ctx.arc(p.x, p.y, p.radius * 1.8, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Inner solid crisp core
-        ctx.beginPath();
-        ctx.fillStyle = `${p.color} ${Math.min(1, currentAlpha * 1.2)})`;
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 4. Inter-particle constellation web
+        const node1 = universeGraph[p1.id];
+        
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
-          const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          const maxDist = isMobile ? 105 : (isIdle ? 115 : 140);
+          if (p2.alpha < 0.05) continue;
 
-          if (dist < maxDist) {
-            const lineAlpha = (1 - dist / maxDist) * (isMobile ? 0.32 : (isIdle ? 0.18 : 0.32));
+          // Only draw lines if there is a real semantic relationship OR if they are both highlighted by mode
+          const hasDirectRelation = node1.relationships.some(r => r.targetId === p2.id) || 
+                                    universeGraph[p2.id].relationships.some(r => r.targetId === p1.id);
+          
+          let drawLine = false;
+          let lineAlpha = 0;
+
+          if (targetCenter) {
+             if (hasDirectRelation && (p1.id === targetCenter || p2.id === targetCenter)) {
+               drawLine = true;
+               lineAlpha = Math.min(p1.alpha, p2.alpha) * 0.6;
+             } else if (hasDirectRelation && relatedIds.has(p1.id) && relatedIds.has(p2.id)) {
+               drawLine = true;
+               lineAlpha = Math.min(p1.alpha, p2.alpha) * 0.3;
+             }
+          } else {
+             // Idle Mode: Draw lines between related items nearby
+             const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+             if (hasDirectRelation && dist < 250) {
+               drawLine = true;
+               lineAlpha = (1 - dist/250) * Math.min(p1.alpha, p2.alpha) * 0.4;
+             }
+          }
+
+          if (drawLine) {
             ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
+            ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = `rgba(20, 184, 166, ${lineAlpha})`;
-            ctx.lineWidth = isMobile ? 0.9 : 0.8;
             ctx.stroke();
           }
         }
@@ -297,11 +260,6 @@ export const LivingAtmosphereCanvas: React.FC = () => {
       window.removeEventListener('orientationchange', setupCanvasSize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('click', handleClick);
       cancelAnimationFrame(animationId);
     };
   }, []);
@@ -322,12 +280,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     >
       <canvas
         ref={canvasRef}
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'block',
-          imageRendering: '-webkit-optimize-contrast',
-        }}
+        style={{ width: '100%', height: '100%', display: 'block' }}
       />
     </div>
   );
