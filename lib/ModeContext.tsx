@@ -32,12 +32,11 @@ export function ModeProvider({ children }: { children: React.ReactNode }) {
   const [activeTheme, setActiveThemeState] = useState<ThemeId>(universeConfig.defaultTheme);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Sync basic light/dark theme on mount based on old system (to prevent flash)
+  // Sync theme on mount
   useEffect(() => {
     setIsInitialLoad(false);
     const saved = getInitialTheme();
-    // For now we map legacy "light" to "daylight" and "dark" to "cosmos"
-    if (saved === 'light') setActiveThemeState('daylight');
+    setActiveThemeState(saved);
   }, []);
 
   // Sync mode changes to CSS custom properties
@@ -89,8 +88,7 @@ export function ModeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = (theme: ThemeId) => {
     startTransition(() => {
       setActiveThemeState(theme);
-      // Legacy compatibility
-      applyBasicTheme(theme === 'daylight' || theme === 'minimal' || theme === 'paper' ? 'light' : 'dark');
+      applyBasicTheme(theme);
     });
   };
 
