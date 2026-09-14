@@ -21,10 +21,22 @@ export const QuantumCanvas: React.FC = () => {
 
     let animationId: number;
     let time = 0;
+    
+    const resizeCanvas = () => {
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      if (!rect) return;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
     const render = () => {
-      const width = canvas.width;
-      const height = canvas.height;
+      // Calculate logical width/height (CSS pixels)
+      const width = canvas.width / (window.devicePixelRatio || 1);
+      const height = canvas.height / (window.devicePixelRatio || 1);
 
       // Clear canvas
       ctx.clearRect(0, 0, width, height);

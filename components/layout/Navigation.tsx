@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Search, Sparkles } from 'lucide-react';
+import { Menu, X, Search, Sparkles, Bot } from 'lucide-react';
 import { siteConfig } from '@/content/site';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher';
 import { CommandPalette } from '@/components/layout/CommandPalette';
 import { useMode } from '@/lib/ModeContext';
 
@@ -288,18 +288,17 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                   fontWeight: 500,
                   cursor: 'pointer',
                   transition: 'all var(--transition-fast)',
-                  minWidth: '34px',
                   height: '34px',
                 }}
-                className="action-ai-btn"
+                className="action-ai-btn interactive-hover"
               >
-                <Sparkles size={15} style={{ flexShrink: 0 }} />
-                <span className="ai-label">Ask AI</span>
+                <Bot size={15} />
+                <span className="ai-label" style={{ fontFamily: 'var(--font-mono)' }}>Ask Ayush</span>
               </button>
             )}
 
             {/* Theme Toggle */}
-            <ThemeToggle />
+            <ThemeSwitcher />
 
             {/* Mobile Hamburger Toggle */}
             <button

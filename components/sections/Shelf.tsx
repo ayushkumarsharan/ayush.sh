@@ -172,9 +172,36 @@ export const Shelf: React.FC = () => {
                   )}
                 </div>
 
-                <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.45, marginTop: 'var(--space-2)' }}>
-                  {cert.description}
-                </p>
+                <div style={{ marginTop: 'var(--space-3)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.45, flex: 1, paddingRight: cert.verifyUrl ? '1rem' : '0' }}>
+                    {cert.description}
+                  </p>
+                  
+                  {cert.verifyUrl && (
+                    <a 
+                      href={cert.verifyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Verify Credential"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: 'var(--radius-full)',
+                        backgroundColor: 'var(--bg-surface-elevated)',
+                        border: '1px solid var(--accent-border)',
+                        color: 'var(--accent-primary)',
+                        transition: 'all 0.2s',
+                        flexShrink: 0
+                      }}
+                      className="interactive-hover"
+                    >
+                      <ShieldCheck size={14} />
+                    </a>
+                  )}
+                </div>
               </Card>
             ))}
           </div>
