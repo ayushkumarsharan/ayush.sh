@@ -5,18 +5,21 @@ import { SectionHeading } from '@/components/ui/SectionHeading';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { intersectionNodes, IntersectionNode } from '@/content/intersection';
-import { Sparkles, ArrowRight, Activity } from 'lucide-react';
+import { Sparkles, ArrowRight, Activity, Orbit } from 'lucide-react';
+import { useMode } from '@/lib/ModeContext';
 
 export const Intersection: React.FC = () => {
+  const { activeMode } = useMode();
   const [selectedNode, setSelectedNode] = useState<IntersectionNode>(intersectionNodes[0]);
+  const isExplorer = activeMode === 'explorer';
 
   return (
-    <section id="intersection" className="section-wrapper" style={{ backgroundColor: 'var(--bg-surface-subtle)' }}>
+    <section id="intersection" className="section-wrapper" style={{ backgroundColor: 'transparent' }}>
       <div className="container">
         <SectionHeading
           number="03"
-          label="The Signature Intersection"
-          title="Where Disciplines Collide & Connect"
+          label={isExplorer ? "The Orbit Map" : "The Signature Intersection"}
+          title={isExplorer ? "Constellation of Capabilities" : "Where Disciplines Collide & Connect"}
           subtitle="Engineering does not live in isolation. Explore the conceptual map of how systems, research, visual craft, and economics cross-pollinate."
         />
 

@@ -8,6 +8,7 @@ import { EasterEggModal } from '@/components/ui/EasterEggModal';
 import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
 import { LivingAtmosphereCanvas } from '@/components/features/LivingAtmosphereCanvas';
 import { ModeProvider } from '@/lib/ModeContext';
+import { EvidenceToggle } from '@/components/ui/EvidenceToggle';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -108,6 +109,7 @@ export default function RootLayout({
             <ScrollProgress />
             <CustomCursor />
             <EasterEggModal />
+            <EvidenceToggle />
 
             {/* Continuous Living Atmosphere Background Canvas */}
             <LivingAtmosphereCanvas />

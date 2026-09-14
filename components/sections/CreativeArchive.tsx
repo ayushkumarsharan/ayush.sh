@@ -6,8 +6,11 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { creativeWorks, CreativeItem } from '@/content/creative';
 import { Palette, Box, Layers, Eye } from 'lucide-react';
+import { useMode } from '@/lib/ModeContext';
 
 export const CreativeArchive: React.FC = () => {
+  const { activeMode } = useMode();
+  const isCreative = activeMode === 'creative';
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const categories = [
@@ -22,7 +25,7 @@ export const CreativeArchive: React.FC = () => {
     : creativeWorks.filter((item) => item.category === selectedCategory);
 
   return (
-    <section id="creative" className="section-wrapper" style={{ backgroundColor: 'var(--bg-surface-subtle)' }}>
+    <section id="creative" className="section-wrapper" style={{ backgroundColor: isCreative ? 'transparent' : 'var(--bg-surface-subtle)' }}>
       <div className="container">
         <SectionHeading
           number="07"
@@ -55,7 +58,14 @@ export const CreativeArchive: React.FC = () => {
         </div>
 
         {/* Creative Works Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: isCreative 
+            ? 'repeat(auto-fit, minmax(400px, 1fr))' 
+            : 'repeat(auto-fit, minmax(320px, 1fr))', 
+          gap: isCreative ? 'var(--space-10)' : 'var(--space-6)',
+          alignItems: 'start'
+        }}>
           {filtered.map((item) => (
             <Card
               key={item.id}

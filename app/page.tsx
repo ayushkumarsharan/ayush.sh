@@ -15,7 +15,9 @@ import { CreativeArchive } from '@/components/sections/CreativeArchive';
 import { HumanSide } from '@/components/sections/HumanSide';
 import { ThisWebsite } from '@/components/sections/ThisWebsite';
 import { Connect } from '@/components/sections/Connect';
-// We also have 'research', 'lab', 'thoughts', 'timeline', 'interests' which we need to map eventually,
+import { JourneyTimeline } from '@/components/sections/JourneyTimeline';
+import { ThinkerMode } from '@/components/sections/ThinkerMode';
+// We also have 'research', 'lab', 'interests' which we need to map eventually,
 // but for now we'll stick to the existing sections mapped to the mode's sections array if possible.
 
 // We will map the section IDs from mode.sections to the actual React components.
@@ -29,9 +31,9 @@ const SectionMap: Record<string, React.FC> = {
   creativeArchive: CreativeArchive,
   humanSide: HumanSide,
   thisWebsite: ThisWebsite,
+  timeline: JourneyTimeline,
+  thoughts: ThinkerMode,
   // Fallbacks for sections not yet created
-  thoughts: Signal, // temporary fallback
-  timeline: Workbench, // temporary fallback
   interests: HumanSide, // temporary fallback
   lab: ProjectsSection, // temporary fallback
   research: Intersection, // temporary fallback

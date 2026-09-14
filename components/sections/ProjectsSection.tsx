@@ -7,9 +7,11 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { projects } from '@/content/projects';
-import { ArrowRight, BookOpen, Award, ExternalLink, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Award, ExternalLink, Sparkles, Layers } from 'lucide-react';
+import { useMode } from '@/lib/ModeContext';
 
 export const ProjectsSection: React.FC = () => {
+  const { activeMode } = useMode();
   return (
     <section id="projects" className="section-wrapper">
       <div className="container">
@@ -80,6 +82,44 @@ export const ProjectsSection: React.FC = () => {
                   >
                     {proj.summary}
                   </p>
+
+                  {/* Mode-Specific: Technical Architecture Overview */}
+                  {(activeMode === 'builder' || activeMode === 'engineer') && proj.caseStudy && (
+                    <div style={{
+                      marginBottom: 'var(--space-6)',
+                      padding: '0.75rem',
+                      backgroundColor: 'var(--bg-surface-elevated)',
+                      borderLeft: '2px solid var(--accent-primary)',
+                      borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.7rem',
+                        textTransform: 'uppercase',
+                        color: 'var(--accent-primary)',
+                        marginBottom: '0.5rem'
+                      }}>
+                        <Layers size={12} /> Tech Architecture
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                        {proj.tags?.map(stack => (
+                          <span key={stack} style={{
+                            fontSize: '0.75rem',
+                            color: 'var(--text-secondary)',
+                            background: 'var(--bg-primary)',
+                            padding: '0.15rem 0.4rem',
+                            borderRadius: '4px',
+                            border: '1px solid var(--border-subtle)'
+                          }}>
+                            {stack}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Recognition Badges if any */}
                   {proj.recognition && proj.recognition.length > 0 && (

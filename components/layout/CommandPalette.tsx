@@ -19,6 +19,9 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { getInitialTheme, applyTheme } from '@/lib/theme';
+import { useMode } from '@/lib/ModeContext';
+import { modeOrder, getModeById } from '@/content/modes';
+import { universeConfig, ThemeId } from '@/content/universe.config';
 
 export interface CommandItem {
   id: string;
@@ -36,8 +39,9 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
+  const { setMode, setTheme } = useMode();
 
-  const commands: CommandItem[] = [
+  const baseCommands: CommandItem[] = [
     {
       id: 'work',
       title: 'Work Experience (M2P, Thales, Makers Lab)',
@@ -124,6 +128,32 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
       keywords: ['social', 'network', 'profile']
     }
   ];
+
+  const modeCommands: CommandItem[] = modeOrder.map(mId => {
+    const mode = getModeById(mId);
+    return {
+      id: `mode-${mId}`,
+      title: `Switch to ${mode.label} Mode`,
+      category: 'Modes',
+      icon: <Sparkles size={16} />,
+      action: () => { setMode(mId); onClose(); },
+      keywords: ['mode', 'lens', mode.label.toLowerCase()]
+    };
+  });
+
+  const themeCommands: CommandItem[] = (Object.keys(universeConfig.themes) as ThemeId[]).map(tId => {
+    const theme = universeConfig.themes[tId];
+    return {
+      id: `theme-${tId}`,
+      title: `Switch to ${theme.label} Theme`,
+      category: 'Themes',
+      icon: <Sun size={16} />,
+      action: () => { setTheme(tId); onClose(); },
+      keywords: ['theme', 'color', 'appearance', tId.toLowerCase()]
+    };
+  });
+
+  const commands = [...modeCommands, ...themeCommands, ...baseCommands];
 
   const filtered = commands.filter((cmd) => {
     if (!query) return true;

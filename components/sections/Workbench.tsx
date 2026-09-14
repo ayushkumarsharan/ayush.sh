@@ -1,14 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { experiences } from '@/content/experience';
-import { ChevronDown, ChevronUp, MapPin, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Calendar, CheckCircle2, ArrowRight, GitMerge } from 'lucide-react';
+import { useMode } from '@/lib/ModeContext';
+
+const ARCHITECTURE_FLOWS: Record<string, string[]> = {
+  m2p: ['Sprint', 'Feature/Fix', 'AI-Assisted Dev', 'Code Review', 'Playwright E2E', 'API Validation', 'Release'],
+  thales: ['Aircraft', 'IFE Systems', 'Operations', 'Monitoring', 'Troubleshooting', 'Reliability'],
+  'tech-mahindra': ['Cloud', 'Pixel Streaming', 'Cost Optimization', '3D Environments', 'LLM Dataset'],
+};
 
 export const Workbench: React.FC = () => {
+  const { activeMode } = useMode();
   const [expandedId, setExpandedId] = useState<string | null>('m2p');
+
+  // In journey mode, we auto-expand older experiences first, or in builder we show them differently.
+  // For now, let's keep m2p expanded by default.
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
@@ -154,6 +165,50 @@ export const Workbench: React.FC = () => {
 
                     {/* Bullet Highlights */}
                     <div style={{ marginBottom: 'var(--space-6)' }}>
+                      
+                      {/* Mode-specific feature: System Architecture Flow (ENGINEER MODE) */}
+                      {activeMode === 'engineer' && ARCHITECTURE_FLOWS[item.id] && (
+                        <div style={{
+                          marginBottom: 'var(--space-6)',
+                          padding: '1rem',
+                          backgroundColor: 'var(--bg-surface-elevated)',
+                          border: '1px dashed var(--border-medium)',
+                          borderRadius: 'var(--radius-md)'
+                        }}>
+                          <div style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.65rem',
+                            color: 'var(--accent-primary)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.1em',
+                            marginBottom: '0.75rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.35rem'
+                          }}>
+                            <GitMerge size={12} /> System Flow
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: '0.5rem',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.75rem',
+                            color: 'var(--text-secondary)'
+                          }}>
+                            {ARCHITECTURE_FLOWS[item.id].map((node, idx, arr) => (
+                              <React.Fragment key={node}>
+                                <span style={{ padding: '0.2rem 0.5rem', background: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)' }}>
+                                  {node}
+                                </span>
+                                {idx < arr.length - 1 && <ArrowRight size={12} style={{ opacity: 0.5 }} />}
+                              </React.Fragment>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div
                         style={{
                           fontFamily: 'var(--font-mono)',
@@ -164,7 +219,7 @@ export const Workbench: React.FC = () => {
                           marginBottom: 'var(--space-3)',
                         }}
                       >
-                        Key Engineering Highlights
+                        {activeMode === 'engineer' ? 'Key Engineering Highlights' : 'Core Contributions'}
                       </div>
                       <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
                         {item.highlights.map((h, i) => (
