@@ -40,11 +40,22 @@ const SectionMap: Record<string, React.FC> = {
   coreIdentity: ThisWebsite, // temporary fallback
 };
 
+import { ArrivalState } from '@/components/sections/ArrivalState';
+
 export default function HomePage() {
   const { activeMode } = useMode();
-  const modeDef = getModeById(activeMode);
   
-  // The layout engine: Only render sections dictated by the active mode, in the order specified.
+  // ARRIVAL STATE
+  if (!activeMode) {
+    return (
+      <div style={{ transition: 'opacity 0.4s ease-in-out' }}>
+        <ArrivalState />
+      </div>
+    );
+  }
+
+  // ACTIVE MODE STATE
+  const modeDef = getModeById(activeMode);
   const activeSections = modeDef.sections;
 
   return (

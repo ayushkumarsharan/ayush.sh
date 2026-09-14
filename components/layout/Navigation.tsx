@@ -141,33 +141,35 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
           </Link>
 
           {/* Mode Indicator Pill (Desktop/Tablet) */}
-          <button
-            onClick={() => setIsCommandOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.35rem 0.75rem',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'var(--bg-surface-elevated)',
-              border: '1px solid var(--border-medium)',
-              color: 'var(--accent-primary)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-sm)',
-              transition: 'all 0.2s',
-            }}
-            className="mode-indicator-btn"
-            title="Switch Mode (⌘K)"
-          >
-            <span style={{ 
-              width: 8, height: 8, borderRadius: '50%', 
-              backgroundColor: 'var(--accent-primary)',
-              boxShadow: '0 0 8px var(--accent-glow)'
-            }} />
-            <span className="mode-indicator-label">{activeMode.toUpperCase()}</span>
-          </button>
+          {activeMode && (
+            <button
+              onClick={() => setIsCommandOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--accent-primary)',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                boxShadow: 'var(--shadow-sm)',
+                transition: 'all 0.2s',
+              }}
+              className="mode-indicator-btn"
+              title="Switch Mode (⌘K)"
+            >
+              <span style={{ 
+                width: 8, height: 8, borderRadius: '50%', 
+                backgroundColor: 'var(--accent-primary)',
+                boxShadow: '0 0 8px var(--accent-glow)'
+              }} />
+              <span className="mode-indicator-label">{activeMode.toUpperCase()}</span>
+            </button>
+          )}
 
           {/* Desktop Floating Navigation Links */}
           <nav

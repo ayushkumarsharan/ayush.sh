@@ -24,6 +24,9 @@ const getIconForMode = (id: ModeId) => {
 
 export const PortalEntry: React.FC = () => {
   const { activeMode, setMode } = useMode();
+
+  if (!activeMode) return null;
+
   const [typedText, setTypedText] = useState('');
   const [cursorVisible, setCursorVisible] = useState(true);
   const [statementIndex, setStatementIndex] = useState(0);
