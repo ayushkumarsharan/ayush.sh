@@ -9,7 +9,6 @@ import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
 import { LivingAtmosphereCanvas } from '@/components/features/LivingAtmosphereCanvas';
 import { ModeProvider } from '@/lib/ModeContext';
 import { UniverseProvider } from '@/lib/UniverseContext';
-import { EvidenceToggle } from '@/components/ui/EvidenceToggle';
 import { UniverseDebug } from '@/components/features/UniverseDebug';
 import { Suspense } from 'react';
 
@@ -112,14 +111,12 @@ export default function RootLayout({
               <ScrollProgress />
               <CustomCursor />
               <EasterEggModal />
-              <EvidenceToggle />
               <LivingAtmosphereCanvas />
               <LayoutWrapper>
                 <div className="noise-overlay" aria-hidden="true" />
                 <main id="main-content" style={{ position: 'relative', zIndex: 1 }}>
                   {children}
                 </main>
-                <EvidenceToggle />
                 <UniverseDebug />
               </LayoutWrapper>
             </UniverseProvider>

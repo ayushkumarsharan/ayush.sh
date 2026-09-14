@@ -45,7 +45,7 @@ export const projects: Project[] = [
       { label: "Awards Won", value: "3 National/Intl" }
     ],
     links: [
-      { label: "View Research Blueprint", url: "/research" },
+      { label: "View IEEE Publication", url: "https://ieeexplore.ieee.org/abstract/document/10522244", external: true },
       { label: "Case Study", url: "/projects/quantum-signal-processing" }
     ],
     caseStudy: {
@@ -139,6 +139,68 @@ export const projects: Project[] = [
     },
     modes: ['engineer', 'builder', 'journey'],
     evidenceType: 'professional'
+  },
+  {
+    slug: "savvy-ai-document-app",
+    title: "Savvy: AI-Driven Document App",
+    subtitle: "Interactive Local RAG PDF Application",
+    category: "Research & AI",
+    timeline: "2024",
+    featured: true,
+    summary: "Built an interactive PDF application integrating Streamlit, ChromaDB, FastEmbed, and Edge-TTS for dynamic document parsing, retrieval-augmented generation, and text-to-speech interaction.",
+    tags: ["Python", "Streamlit", "ChromaDB", "FastEmbed", "Edge-TTS", "LLM", "RAG"],
+    links: [
+      { label: "Case Study", url: "/projects/savvy-ai-document-app" }
+    ],
+    caseStudy: {
+      overview: "Bringing static documents to life through localized conversational AI and voice synthesis.",
+      context: "Reading dense technical PDFs or long reports is time-consuming. Users need a way to instantly query documents and receive synthesized audio answers.",
+      challenge: "Building a fully local RAG (Retrieval-Augmented Generation) pipeline that doesn't rely on expensive cloud vector databases or API calls for embeddings.",
+      architecture: "A Streamlit frontend paired with a local ChromaDB vector store. FastEmbed processes documents into vectors locally, and Edge-TTS provides immediate audio synthesis for the generated responses.",
+      implementation: [
+        "Integrated FastEmbed for ultra-fast, local document embedding generation.",
+        "Engineered a ChromaDB retrieval system to chunk and store PDF context for accurate LLM querying.",
+        "Built a seamless Streamlit chat interface with Edge-TTS to read responses aloud."
+      ],
+      outcomes: [
+        "Created a fully functional, privacy-first document analysis tool that runs efficiently on local hardware."
+      ],
+      learned: "Local AI inference is rapidly closing the gap with cloud models. You can build remarkably powerful, private AI tools using localized embeddings and vector stores."
+    },
+    modes: ['builder', 'explorer'],
+    evidenceType: 'project'
+  },
+  {
+    slug: "personal-universe",
+    title: "The Personal Universe",
+    subtitle: "A digital representation of one person containing multiple dimensions",
+    category: "Creative Tech",
+    timeline: "2024 – Present",
+    featured: true,
+    summary: "Engineered and deployed a modern web application featuring semantic navigation, spatial relationship graphs, and bespoke CSS architectures to demonstrate end-to-end frontend development and CI/CD hosting workflows.",
+    tags: ["Next.js", "React", "TypeScript", "Vercel", "CSS Architecture", "WebGL", "Framer Motion"],
+    links: [
+      { label: "Case Study", url: "/projects/personal-universe" }
+    ],
+    caseStudy: {
+      overview: "This very website is a continuous engineering and design project.",
+      context: "Standard portfolios are generic lists of achievements. I needed a space that reflects the complexity of human interests—where engineering, creative technology, and personal practices exist in a shared ecosystem.",
+      challenge: "Building a complex spatial navigation model that degrades gracefully, maintains strict accessibility standards, and scores perfectly on performance metrics.",
+      architecture: "Next.js App Router providing static generation. A custom React Context-driven graph engine computes spatial node relationships deterministically. Styling is handled via pure, bespoke CSS custom properties with scroll-driven progressive enhancement.",
+      implementation: [
+        "Built a 'Living Atmosphere' canvas that visualizes data relationships rather than random particles.",
+        "Implemented CSS scroll-driven animations using `@supports (animation-timeline: view())`.",
+        "Architected a 'Worlds and Atmospheres' framework allowing visitors to explore different facets of my identity without feeling lost.",
+        "Employed AI-assisted development workflows to accelerate boilerplate and rapidly test structural concepts."
+      ],
+      outcomes: [
+        "Deployed a highly performant, deeply personalized web application.",
+        "Established a scalable semantic data model capable of ingesting years of future work without breaking UI patterns."
+      ],
+      learned: "A sophisticated system requires subtraction. You must have the discipline to remove generic templates, unnecessary features, and visual noise until only what is necessary remains."
+    },
+    modes: ['builder', 'creative', 'thinker'],
+    evidenceType: 'project'
   },
   {
     slug: "lit-parking",

@@ -106,16 +106,17 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span
                 style={{
-                  fontFamily: 'var(--font-body)',
+                  fontFamily: 'var(--font-display)',
                   fontWeight: 600,
-                  fontSize: 'clamp(0.85rem, 2.5vw, 0.925rem)',
+                  fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
                   color: 'var(--text-primary)',
-                  letterSpacing: '-0.01em',
+                  letterSpacing: '0.02em',
                   lineHeight: 1.2,
                   whiteSpace: 'nowrap',
+                  textTransform: 'uppercase',
                 }}
               >
-                Ayush Sharan
+                AYUSH KUMAR SHARAN
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.1rem' }}>
                 <span
@@ -131,50 +132,19 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.625rem',
+                    fontSize: '0.65rem',
                     color: 'var(--accent-primary)',
-                    letterSpacing: '0.04em',
+                    letterSpacing: '0.06em',
                     textTransform: 'uppercase',
                   }}
                 >
-                  Active
+                  ENGINEER • BUILDER
                 </span>
               </div>
             </div>
           </Link>
 
-          {/* Spatial Coordinate Indicator (You Are Here) */}
-          <button
-            onClick={() => setIsCommandOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              padding: '0.35rem 0.75rem',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'var(--bg-surface-elevated)',
-              border: '1px solid var(--border-medium)',
-              color: 'var(--accent-primary)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.7rem',
-              cursor: 'pointer',
-              boxShadow: 'var(--shadow-sm)',
-              transition: 'all 0.2s',
-            }}
-            className="coordinate-indicator-btn"
-            title="Switch Mode (⌘K)"
-          >
-            <span style={{ 
-              width: 6, height: 6, borderRadius: '50%', 
-              backgroundColor: 'var(--accent-primary)',
-              boxShadow: '0 0 8px var(--accent-glow)'
-            }} />
-            <span className="coordinate-indicator-label">
-              UNIVERSE
-              {activeMode && ` / ${activeMode.toUpperCase()}`}
-              {activeNode && activeNode !== `coord-${activeMode}` && ` / ${universeGraph[activeNode]?.title?.toUpperCase() || 'NODE'}`}
-            </span>
-          </button>
+          {/* Removed Coordinate Indicator per redesign directive */}
 
           {/* Desktop Floating Navigation Links */}
           <nav
@@ -247,6 +217,33 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             }}
           >
             {/* Quick Search & Command Palette Trigger */}
+            <a
+              href="https://github.com/ayushkumarsharan"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Profile"
+              title="GitHub Profile"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '34px',
+                height: '34px',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+              }}
+              className="action-github-btn"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+                <path d="M9 18c-4.51 2-5-2-7-2" />
+              </svg>
+            </a>
+
             <button
               onClick={() => setIsCommandOpen(true)}
               aria-label="Quick Search & Navigation (Cmd/Ctrl + K)"
