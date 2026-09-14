@@ -7,6 +7,8 @@ import { CustomCursor } from '@/components/ui/CustomCursor';
 import { EasterEggModal } from '@/components/ui/EasterEggModal';
 import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
 import { LivingAtmosphereCanvas } from '@/components/features/LivingAtmosphereCanvas';
+import { ModeProvider } from '@/lib/ModeContext';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -98,21 +100,25 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <a href="#main-content" className="skip-to-content">
-          Skip to main content
-        </a>
-        <ScrollProgress />
-        <CustomCursor />
-        <EasterEggModal />
+        <Suspense fallback={null}>
+          <ModeProvider>
+            <a href="#main-content" className="skip-to-content">
+              Skip to main content
+            </a>
+            <ScrollProgress />
+            <CustomCursor />
+            <EasterEggModal />
 
-        {/* Continuous Living Atmosphere Background Canvas */}
-        <LivingAtmosphereCanvas />
+            {/* Continuous Living Atmosphere Background Canvas */}
+            <LivingAtmosphereCanvas />
 
-        <LayoutWrapper>
-          <main id="main-content" style={{ position: 'relative', zIndex: 1 }}>
-            {children}
-          </main>
-        </LayoutWrapper>
+            <LayoutWrapper>
+              <main id="main-content" style={{ position: 'relative', zIndex: 1 }}>
+                {children}
+              </main>
+            </LayoutWrapper>
+          </ModeProvider>
+        </Suspense>
       </body>
     </html>
   );

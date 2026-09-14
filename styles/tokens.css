@@ -69,6 +69,15 @@
   --container-max: 1200px;
   --container-narrow: 840px;
   --container-wide: 1400px;
+
+  /* Mode System Variables (Injected by ModeContext, with fallbacks) */
+  --mode-hue: 168; /* Default engineer hue (teal) */
+  --mode-motion: 0.4;
+  --mode-scale: 1.0;
+  
+  /* Update accent colors to derive from mode hue if data-mode is present, otherwise fallback */
+  /* We will handle dynamic colors directly in JS for now to avoid breaking existing hex logic, 
+     but we store the hue for particle canvases. */
 }
 
 [data-theme="light"] {

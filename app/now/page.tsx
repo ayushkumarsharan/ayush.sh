@@ -140,7 +140,7 @@ export default function NowPage() {
                 }}
               >
                 <CheckCircle2 size={16} style={{ color: 'var(--accent-primary)', flexShrink: 0, marginTop: '0.2rem' }} />
-                <span>{pr}</span>
+                <span>{pr.text}</span>
               </li>
             ))}
           </ul>
