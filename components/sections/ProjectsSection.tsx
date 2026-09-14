@@ -23,14 +23,14 @@ export const ProjectsSection: React.FC = () => {
         />
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)' }}>
-          {projects.map((proj) => {
+          {projects.map((proj, index) => {
             const isQuantum = proj.slug === 'quantum-signal-processing';
 
             return (
-              <Card
-                key={proj.slug}
-                variant={proj.featured ? 'elevated' : 'surface'}
-                padding="lg"
+              <div key={proj.slug} className="scroll-reveal" style={{ animationDelay: `${index * 100}ms` }}>
+                <Card
+                  variant={proj.featured ? 'elevated' : 'surface'}
+                  padding="lg"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -188,6 +188,7 @@ export const ProjectsSection: React.FC = () => {
                   )}
                 </div>
               </Card>
+            </div>
             );
           })}
         </div>

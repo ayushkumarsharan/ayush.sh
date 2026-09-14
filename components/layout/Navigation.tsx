@@ -8,9 +8,12 @@ import { siteConfig } from '@/content/site';
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher';
 import { CommandPalette } from '@/components/layout/CommandPalette';
 import { useMode } from '@/lib/ModeContext';
+import { useUniverse } from '@/lib/UniverseContext';
+import { universeGraph } from '@/content/universe';
 
 export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI }) => {
   const { activeMode } = useMode();
+  const { activeNode } = useUniverse();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
@@ -140,36 +143,38 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             </div>
           </Link>
 
-          {/* Mode Indicator Pill (Desktop/Tablet) */}
-          {activeMode && (
-            <button
-              onClick={() => setIsCommandOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.35rem 0.75rem',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-medium)',
-                color: 'var(--accent-primary)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s',
-              }}
-              className="mode-indicator-btn"
-              title="Switch Mode (⌘K)"
-            >
-              <span style={{ 
-                width: 8, height: 8, borderRadius: '50%', 
-                backgroundColor: 'var(--accent-primary)',
-                boxShadow: '0 0 8px var(--accent-glow)'
-              }} />
-              <span className="mode-indicator-label">{activeMode.toUpperCase()}</span>
-            </button>
-          )}
+          {/* Spatial Coordinate Indicator (You Are Here) */}
+          <button
+            onClick={() => setIsCommandOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.35rem 0.75rem',
+              borderRadius: 'var(--radius-full)',
+              backgroundColor: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-medium)',
+              color: 'var(--accent-primary)',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.7rem',
+              cursor: 'pointer',
+              boxShadow: 'var(--shadow-sm)',
+              transition: 'all 0.2s',
+            }}
+            className="coordinate-indicator-btn"
+            title="Switch Mode (⌘K)"
+          >
+            <span style={{ 
+              width: 6, height: 6, borderRadius: '50%', 
+              backgroundColor: 'var(--accent-primary)',
+              boxShadow: '0 0 8px var(--accent-glow)'
+            }} />
+            <span className="coordinate-indicator-label">
+              UNIVERSE
+              {activeMode && ` / ${activeMode.toUpperCase()}`}
+              {activeNode && activeNode !== `coord-${activeMode}` && ` / ${universeGraph[activeNode]?.title?.toUpperCase() || 'NODE'}`}
+            </span>
+          </button>
 
           {/* Desktop Floating Navigation Links */}
           <nav
@@ -429,7 +434,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             display: inline-flex !important;
           }
           /* On mobile: Compact icon-only buttons for Search & Ask AI */
-          .search-label, .ai-label, .mode-indicator-label {
+          .search-label, .ai-label, .coordinate-indicator-label {
             display: none !important;
           }
           .action-search-btn, .action-ai-btn {
@@ -437,7 +442,7 @@ export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI
             width: 34px !important;
             height: 34px !important;
           }
-          .mode-indicator-btn {
+          .coordinate-indicator-btn {
             padding: 0.35rem 0.5rem !important;
           }
         }

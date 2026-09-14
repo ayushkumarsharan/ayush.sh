@@ -78,6 +78,57 @@
 .stagger-4 { animation-delay: 240ms; }
 .stagger-5 { animation-delay: 300ms; }
 
+/* --- CSS SCROLL-DRIVEN ANIMATIONS (Baseline 2025/2026 Progressive Enhancement) --- */
+@supports (animation-timeline: view()) {
+  .scroll-reveal {
+    animation: fadeInUp linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
+    will-change: opacity, transform;
+  }
+
+  .scroll-fade {
+    animation: fadeIn linear both;
+    animation-timeline: view();
+    animation-range: entry 5% cover 25%;
+  }
+
+  .scroll-scale-up {
+    animation: scrollScaleUp linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+
+  .scroll-parallax-bg {
+    animation: parallaxBg linear both;
+    animation-timeline: scroll(root);
+  }
+
+  @keyframes scrollScaleUp {
+    from {
+      opacity: 0;
+      transform: scale(0.92) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes parallaxBg {
+    from { transform: translateY(0); }
+    to { transform: translateY(15vh); }
+  }
+}
+
+/* If unsupported, fallback to simple static opacity (or intersection observer if handled by JS) */
+@supports not (animation-timeline: view()) {
+  .scroll-reveal, .scroll-fade, .scroll-scale-up {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* GPU Acceleration */
 .will-animate {
   will-change: transform, opacity;
@@ -94,5 +145,11 @@
   
   .animate-float-slow {
     animation: none !important;
+  }
+  
+  .scroll-reveal, .scroll-fade, .scroll-scale-up, .scroll-parallax-bg {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

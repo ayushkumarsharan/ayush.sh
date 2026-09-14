@@ -6,6 +6,9 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, CheckCircle2, Award, Layers, Sparkles, ExternalLink } from 'lucide-react';
+import { ProjectWorldSync } from '@/components/features/ProjectWorldSync';
+import { SystemView } from '@/components/features/SystemView';
+import { PortalLink } from '@/components/ui/PortalLink';
 
 export function generateStaticParams() {
   return projects.map((project) => ({
@@ -23,7 +26,8 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
   const { caseStudy } = project;
 
   return (
-    <div style={{ paddingTop: 'var(--space-24)', paddingBottom: 'var(--space-24)' }}>
+    <div className="animate-fade-in-up" style={{ paddingTop: 'var(--space-24)', paddingBottom: 'var(--space-24)' }}>
+      <ProjectWorldSync projectSlug={params.slug} />
       <div className="container" style={{ maxWidth: '900px' }}>
         {/* Back navigation */}
         <div style={{ marginBottom: 'var(--space-8)' }}>
@@ -124,25 +128,32 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
           </Card>
 
           {/* 03 Architecture Blueprint */}
-          <Card variant="elevated" padding="lg" style={{ backgroundColor: 'var(--bg-surface-elevated)' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-              03 — System Architecture
-            </div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)', marginBottom: 'var(--space-3)' }}>
-              The Engineering Approach
-            </h3>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 'var(--space-4)' }}>
-              {caseStudy.architecture}
-            </p>
+          <div className="scroll-reveal">
+            <Card variant="elevated" padding="lg" style={{ backgroundColor: 'var(--bg-surface-elevated)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)' }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                    03 — System Architecture
+                  </div>
+                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)' }}>
+                    The Engineering Approach
+                  </h3>
+                </div>
+                <SystemView />
+              </div>
+              <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 'var(--space-4)' }}>
+                {caseStudy.architecture}
+              </p>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', borderTop: '1px solid var(--border-subtle)', paddingTop: 'var(--space-3)' }}>
-              {project.tags.map((t) => (
-                <Badge key={t} variant="subtle" size="sm">
-                  {t}
-                </Badge>
-              ))}
-            </div>
-          </Card>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', borderTop: '1px solid var(--border-subtle)', paddingTop: 'var(--space-3)' }}>
+                {project.tags.map((t) => (
+                  <Badge key={t} variant="subtle" size="sm">
+                    {t}
+                  </Badge>
+                ))}
+              </div>
+            </Card>
+          </div>
 
           {/* 04 Implementation Details */}
           <Card variant="surface" padding="lg">
@@ -194,6 +205,40 @@ export default function ProjectCaseStudyPage({ params }: { params: { slug: strin
               </p>
             </Card>
           )}
+        </div>
+        
+        {/* Relationship Threads / Continue Exploring */}
+        <div className="scroll-reveal" style={{ marginTop: 'var(--space-16)', paddingTop: 'var(--space-8)', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-tertiary)', marginBottom: 'var(--space-4)' }}>
+            CONTINUE EXPLORING
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
+            {project.slug === 'quantum-signal-processing' && (
+              <>
+                <PortalLink href="/#signal" nodeId="ach-ieee" variant="card">
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Evidence</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>IEEE Publication</div>
+                </PortalLink>
+                <PortalLink href="/#projects" nodeId="tech-ml" variant="card">
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Technology</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Machine Learning</div>
+                </PortalLink>
+              </>
+            )}
+            {project.slug === 'job-os' && (
+              <>
+                <PortalLink href="/#projects" nodeId="tech-typescript" variant="card">
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Technology</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>TypeScript Ecosystem</div>
+                </PortalLink>
+              </>
+            )}
+            {/* Fallback back to home */}
+            <PortalLink href="/#projects" variant="card">
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Return</div>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>All Projects</div>
+            </PortalLink>
+          </div>
         </div>
       </div>
     </div>

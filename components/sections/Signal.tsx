@@ -6,10 +6,13 @@ import { Card } from '@/components/ui/Card';
 import { GravityText } from '@/components/ui/GravityText';
 import { profile } from '@/content/profile';
 import { ShieldCheck, Award, BookOpen, Cpu, DollarSign, Layers } from 'lucide-react';
+import { useNodeFocus } from '@/lib/useNodeFocus';
 
 export const Signal: React.FC = () => {
+  const sectionRef = useNodeFocus('exp-m2p', 0.3) as any;
+
   return (
-    <section id="signal" className="section-wrapper">
+    <section id="signal" ref={sectionRef} className="section-wrapper">
       <div className="container">
         <SectionHeading
           number="01"
