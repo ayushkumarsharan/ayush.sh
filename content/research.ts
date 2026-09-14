@@ -1,3 +1,5 @@
+import type { ModeId, EvidenceType } from './modes';
+
 export interface ResearchSection {
   id: string;
   title: string;
@@ -7,11 +9,32 @@ export interface ResearchSection {
   details: string[];
 }
 
-export const researchData = {
+export interface ResearchData {
+  paperTitle: string;
+  authors: string;
+  conference: string;
+  publicationStatus: string;
+  paperUrl?: string;
+  awards: { title: string; organization: string; note: string }[];
+  abstract: string;
+  executiveSummary: string;
+  sections: ResearchSection[];
+  simulationParams: {
+    qubitCount: number;
+    coherenceTimeT2: string;
+    fidelityTarget: string;
+    noiseModels: string[];
+  };
+  modes: ModeId[];
+  evidenceType: EvidenceType;
+}
+
+export const researchData: ResearchData = {
   paperTitle: "Quantum-Driven Signal Processing for Next-Generation Communication Channels",
   authors: "Ayush Kumar Sharan et al.",
   conference: "IEEE ICRITO 2024 (11th International Conference on Reliability, Infocom Technologies and Optimization)",
   publicationStatus: "Published in IEEE Xplore Digital Library",
+  paperUrl: "https://ieeexplore.ieee.org/abstract/document/10522244",
   awards: [
     { title: "Best Paper Award", organization: "IEEE ICRITO 2024", note: "Recognized among hundreds of international submissions for conceptual depth and rigor." },
     { title: "1st Place Winner", organization: "Technovate 2024", note: "Top technical innovation project presentation." },
@@ -74,5 +97,7 @@ export const researchData = {
     coherenceTimeT2: "50 µs",
     fidelityTarget: "> 94.8%",
     noiseModels: ["Dephasing", "Depolarizing", "Thermal Relaxation", "Phase Damping"]
-  }
+  },
+  modes: ['explorer', 'engineer', 'thinker', 'journey'],
+  evidenceType: 'research'
 };

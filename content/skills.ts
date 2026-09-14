@@ -1,3 +1,5 @@
+import type { ModeId } from './modes';
+
 export interface SkillItem {
   name: string;
   context: string;
@@ -10,6 +12,7 @@ export interface SkillCategory {
   capability: string;
   description: string;
   skills: SkillItem[];
+  modes: ModeId[];
 }
 
 export const skillCategories: Record<string, SkillCategory> = {
@@ -23,7 +26,8 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "Java", context: "Android application architecture, OOP, backend microservices", level: "experienced" },
       { name: "SQL", context: "Relational queries, schema design, performance analysis", level: "experienced" },
       { name: "JSON / REST", context: "Schema validation, payload assertions, contract testing", level: "core" }
-    ]
+    ],
+    modes: ['engineer', 'builder']
   },
   automate: {
     title: "Automate",
@@ -35,7 +39,8 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "API Testing", context: "Contract testing, idempotency validation, error boundaries", level: "core" },
       { name: "Regression & Sanity", context: "Production release validation, hotfix sign-offs", level: "core" },
       { name: "STLC & Test Design", context: "Test matrix formulation, edge-case isolation", level: "core" }
-    ]
+    ],
+    modes: ['engineer', 'builder', 'thinker']
   },
   systems: {
     title: "Systems",
@@ -49,7 +54,8 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "Kubernetes & Argo CD", context: "Declarative GitOps, cluster workload operations", level: "experienced" },
       { name: "Linux / Bash", context: "Server administration, shell scripting, performance diagnostics", level: "core" },
       { name: "CI/CD Workflows", context: "Automated test triggers, deployment gates, GitHub Actions", level: "core" }
-    ]
+    ],
+    modes: ['engineer', 'explorer']
   },
   data: {
     title: "Data / Backend",
@@ -59,7 +65,8 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "MongoDB", context: "Document persistence, aggregation queries, index design", level: "experienced" },
       { name: "Kafka", context: "Distributed event streaming, message queue verification", level: "experienced" },
       { name: "Firebase", context: "Realtime database, Cloud Functions, auth synchronization", level: "experienced" }
-    ]
+    ],
+    modes: ['engineer', 'builder']
   },
   observe: {
     title: "Observe",
@@ -69,7 +76,8 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "DataDog", context: "APM tracing, metric dashboards, log aggregation alerts", level: "experienced" },
       { name: "Browser DevTools", context: "Network inspection, performance profiling, DOM diagnostics", level: "core" },
       { name: "Git & Jira", context: "Version control workflows, release tracking, bug triage", level: "core" }
-    ]
+    ],
+    modes: ['engineer', 'thinker']
   },
   create: {
     title: "Create",
@@ -79,8 +87,10 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "Unity", context: "Interactive 3D environments, C# scripting, simulation", level: "experienced" },
       { name: "Unreal Engine 5", context: "Pixel Streaming, Lumen lighting, spatial design", level: "experienced", highlight: true },
       { name: "Blender", context: "Hard-surface 3D modeling, UV unwrapping, asset creation", level: "experienced" },
-      { name: "Figma & Canva", context: "Wireframing, design systems, visual presentation craft", level: "experienced" }
-    ]
+      { name: "Figma & Canva", context: "Wireframing, design systems, visual presentation craft", level: "experienced" },
+      { name: "Word & PowerPoint", context: "Complex document structuring and persuasive slide decks", level: "experienced" }
+    ],
+    modes: ['creative', 'builder', 'life']
   },
   explore: {
     title: "Explore",
@@ -91,6 +101,7 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "Machine Learning", context: "Neural signal processing, regression models, NPTEL", level: "exploring" },
       { name: "Game Architecture", context: "State machines, entity systems, game mechanics", level: "exploring" },
       { name: "LLM Datasets", context: "Linguistic curation for Project Indus (Tech Mahindra)", level: "exploring" }
-    ]
+    ],
+    modes: ['explorer', 'thinker', 'journey']
   }
 };

@@ -1,3 +1,5 @@
+import type { ModeId, EvidenceType } from './modes';
+
 export interface CreativeItem {
   id: string;
   title: string;
@@ -9,6 +11,8 @@ export interface CreativeItem {
   gradientTheme?: string;
   palette?: string[];
   notes?: string;
+  modes: ModeId[];
+  evidenceType: EvidenceType;
 }
 
 export const creativeWorks: CreativeItem[] = [
@@ -22,7 +26,9 @@ export const creativeWorks: CreativeItem[] = [
     tags: ["Unreal Engine 5", "Blender", "Spatial Design", "Lumen", "3D Modeling"],
     gradientTheme: "linear-gradient(135deg, #1f2937, #111827)",
     palette: ["#111827", "#1f2937", "#374151", "#2dd4bf"],
-    notes: "Studying how light behaves when moving through atmospheric fog teaches you fundamental lessons about perception, contrast, and visual hierarchy that apply directly to interface design."
+    notes: "Studying how light behaves when moving through atmospheric fog teaches you fundamental lessons about perception, contrast, and visual hierarchy that apply directly to interface design.",
+    modes: ['creative', 'explorer'],
+    evidenceType: 'project'
   },
   {
     id: "watercolor-sketches",
@@ -34,7 +40,9 @@ export const creativeWorks: CreativeItem[] = [
     tags: ["Watercolor", "Charcoal", "Observational Art", "Composition", "Color Theory"],
     gradientTheme: "linear-gradient(135deg, #2d3748, #1a202c)",
     palette: ["#e2e8f0", "#94a3b8", "#475569", "#0d9488"],
-    notes: "Watercolor forces patience and decisiveness: pigment flows where water leads. It trains the eye to see values and negative space before details."
+    notes: "Watercolor forces patience and decisiveness: pigment flows where water leads. It trains the eye to see values and negative space before details.",
+    modes: ['creative', 'life'],
+    evidenceType: 'interest'
   },
   {
     id: "interface-design-systems",
@@ -46,7 +54,9 @@ export const creativeWorks: CreativeItem[] = [
     tags: ["Design Systems", "Typography", "Figma", "Interaction Design", "Swiss Design"],
     gradientTheme: "linear-gradient(135deg, #1e293b, #0f172a)",
     palette: ["#0f172a", "#1e293b", "#38bdf8", "#f8fafc"],
-    notes: "Good typography creates quiet clarity. When letter-spacing, line-height, and rhythm are calibrated with precision, words communicate before they are even read."
+    notes: "Good typography creates quiet clarity. When letter-spacing, line-height, and rhythm are calibrated with precision, words communicate before they are even read.",
+    modes: ['creative', 'builder', 'thinker'],
+    evidenceType: 'exploration'
   },
   {
     id: "game-mechanics-prototyping",
@@ -54,10 +64,12 @@ export const creativeWorks: CreativeItem[] = [
     medium: "Unity 3D • C# • State Machine Architectures",
     year: "2023",
     category: "3D & Interactive",
-    description: "Experimental game prototypes testing kinematic character controllers, procedural physics reactions, and real-time state machines.",
+    description: "Experimental game prototypes testing kinematic character controllers, procedural physics reactions, and real-time state machines. Strongly influenced by narrative-driven games like The Witcher.",
     tags: ["Unity", "C#", "Game Physics", "Kinematics", "State Machines"],
     gradientTheme: "linear-gradient(135deg, #18181b, #09090b)",
     palette: ["#09090b", "#27272a", "#a1a1aa", "#14b8a6"],
-    notes: "Game mechanics are pure system design: inputs, state transforms, feedback loops, and edge-case physics resolution."
+    notes: "Game mechanics are pure system design: inputs, state transforms, feedback loops, and edge-case physics resolution.",
+    modes: ['creative', 'explorer', 'life'],
+    evidenceType: 'exploration'
   }
 ];

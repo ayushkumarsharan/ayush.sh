@@ -1,3 +1,5 @@
+import type { ModeId } from './modes';
+
 export interface NavLink {
   label: string;
   href: string;
@@ -14,13 +16,13 @@ export interface SiteConfig {
   ogImage: string;
   accentColor: string;
   navLinks: NavLink[];
-  socialLinks: { platform: string; url: string; handle?: string; icon: string }[];
+  socialLinks: { platform: string; url: string; handle?: string; icon: string; hidden?: boolean }[];
   projectStatement: string;
 }
 
 export const siteConfig: SiteConfig = {
   name: "Ayush Kumar Sharan",
-  title: "Ayush Kumar Sharan — Systems, Automation & Creative Technology",
+  title: "Ayush Kumar Sharan — The Universe Portal",
   description: "Systems & Automation Engineer with hands-on experience in QA Automation, Cloud Infrastructure, and published IEEE research in quantum-driven signal processing. University Gold Medallist.",
   author: "Ayush Kumar Sharan",
   url: "https://ayushkumarsharan.com",
@@ -40,7 +42,7 @@ export const siteConfig: SiteConfig = {
     { platform: "LinkedIn", url: "https://linkedin.com/in/ayush-kumar-sharan", handle: "ayush-kumar-sharan", icon: "linkedin" },
     { platform: "GitHub", url: "https://github.com/ayushkumarsharan", handle: "ayushkumarsharan", icon: "github" },
     { platform: "Email", url: "mailto:ayuskumarsharan@gmail.com", handle: "ayuskumarsharan@gmail.com", icon: "mail" },
-    { platform: "Phone", url: "tel:+919667972192", handle: "+91 9667972192", icon: "phone" }
+    { platform: "Phone", url: "tel:+919667972192", handle: "+91 9667972192", icon: "phone", hidden: true }
   ],
   projectStatement: "This website is a part-time personal project engineered by Ayush Kumar Sharan to explore modern web performance, accessible typography, and interdisciplinary visual storytelling."
 };

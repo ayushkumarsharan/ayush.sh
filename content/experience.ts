@@ -1,3 +1,5 @@
+import type { ModeId, EvidenceType } from './modes';
+
 export interface Experience {
   id: string;
   company: string;
@@ -10,6 +12,8 @@ export interface Experience {
   tags: string[];
   highlights: string[];
   metrics?: { label: string; value: string }[];
+  modes: ModeId[];
+  evidenceType: EvidenceType;
 }
 
 export const experiences: Experience[] = [
@@ -21,18 +25,22 @@ export const experiences: Experience[] = [
     current: true,
     location: "Noida / Remote",
     frame: "Validating the distributed systems that move money.",
-    summary: "Architecting enterprise-grade test automation and CI/CD validation for high-throughput fintech microservices, ecommerce checkout engines, and payment card platforms.",
+    summary: "Participating directly in production sprints across development and quality engineering, building Playwright POM frameworks, and validating backend APIs.",
     tags: ["Playwright", "TypeScript", "POM Architecture", "REST API", "Microservices", "Fintech", "CI/CD", "Kafka"],
     highlights: [
-      "Built resilient Playwright-based E2E automation frameworks using TypeScript and modular Page Object Model (POM) architecture, cutting regression test execution time by 60%.",
-      "Validated distributed fintech microservices, ecommerce checkout flows, and payment card processing systems through regression, sanity, hotfix, and production release testing.",
-      "Engineered prompt-driven backend API automation workflows for Merchant Management Systems utilizing structured JSON payload validation and dynamic assertions.",
-      "Collaborated across cross-functional product, development, and DevOps teams to isolate critical edge-case bugs and continuously monitor application uptime in distributed staging and prod environments."
+      "Contribute 4-5 feature and bug-fix tasks per production sprint while concurrently validating other developers' work.",
+      "Implement feature enhancements and production bug fixes by understanding existing code structure and tracing application behavior.",
+      "Review and refine AI-generated code for correctness, architectural fit, edge cases, and integration impact before validation.",
+      "Build resilient Playwright-based E2E automation frameworks using TypeScript and modular Page Object Model (POM) architecture.",
+      "Validate fintech microservices, e-commerce checkout flows, and backend APIs through regression, sanity, hotfix, and release testing.",
+      "Design prompt-driven backend API automation workflows for Merchant Management Systems utilizing structured JSON payload validation."
     ],
     metrics: [
-      { label: "Automation Architecture", value: "Playwright + TS" },
-      { label: "Domain Focus", value: "Core Fintech & APIs" }
-    ]
+      { label: "Sprint Output", value: "4-5 Fixes/Features" },
+      { label: "Automation Architecture", value: "Playwright + TS" }
+    ],
+    modes: ['engineer', 'builder', 'journey'],
+    evidenceType: 'professional'
   },
   {
     id: "thales",
@@ -45,14 +53,16 @@ export const experiences: Experience[] = [
     summary: "Supported high-reliability airborne avionics and connected inflight entertainment (IFE) hardware/software ecosystems with rigorous monitoring, diagnostics, and deployment procedures.",
     tags: ["Avionics", "IFE Systems", "System Monitoring", "Linux", "Troubleshooting", "Operational Reliability"],
     highlights: [
-      "Supported commercial aircraft avionics and inflight entertainment systems, ensuring compliance with strict aviation security and reliability protocols.",
-      "Managed deployment pipelines, real-time telemetry monitoring, and systematic hardware-in-the-loop troubleshooting for high-availability airborne systems.",
+      "Supported commercial aircraft avionics and inflight entertainment systems with a focus on deployment, troubleshooting, and operational reliability.",
+      "Worked across system behavior, issue investigation, and operational support in an aviation environment where reliability and controlled releases were critical.",
       "Conducted root-cause analysis on complex distributed hardware/software anomalies, collaborating with global systems engineering divisions."
     ],
     metrics: [
       { label: "Industry", value: "Aerospace & Defense" },
       { label: "Core Priority", value: "Zero Downtime" }
-    ]
+    ],
+    modes: ['engineer', 'journey', 'thinker'],
+    evidenceType: 'professional'
   },
   {
     id: "tech-mahindra",
@@ -72,6 +82,8 @@ export const experiences: Experience[] = [
     metrics: [
       { label: "Hosting Cost Reduction", value: "76%" },
       { label: "R&D Initiative", value: "Indus LLM & 3D" }
-    ]
+    ],
+    modes: ['engineer', 'builder', 'creative', 'explorer', 'journey'],
+    evidenceType: 'professional'
   }
 ];

@@ -1,8 +1,10 @@
+import type { ModeId, EvidenceType } from './modes';
+
 export interface Project {
   slug: string;
   title: string;
   subtitle: string;
-  category: "Research & AI" | "Systems & Cloud" | "Mobile & Apps" | "Creative Tech";
+  category: "Research & AI" | "Systems & Cloud" | "Mobile & Apps" | "Creative Tech" | "Automation & Tooling";
   timeline: string;
   featured: boolean;
   summary: string;
@@ -19,6 +21,8 @@ export interface Project {
     outcomes: string[];
     learned: string;
   };
+  modes: ModeId[];
+  evidenceType: EvidenceType;
 }
 
 export const projects: Project[] = [
@@ -61,7 +65,45 @@ export const projects: Project[] = [
         "Published officially in the IEEE Xplore digital library archive."
       ],
       learned: "Interdisciplinary research taught me that breakthrough solutions rarely exist inside a single silo; the most fertile territory often lies at the seams between seemingly unrelated engineering fields."
-    }
+    },
+    modes: ['explorer', 'engineer', 'builder', 'journey'],
+    evidenceType: 'research'
+  },
+  {
+    slug: "job-os",
+    title: "JobOS & LeanJobOS",
+    subtitle: "Autonomous Job Application Ecosystem",
+    category: "Automation & Tooling",
+    timeline: "2024",
+    featured: true,
+    summary: "Architected a local, privacy-first autonomous job application pipeline using SQLite, custom browser profiles, and local LLM integration to streamline and analyze the job search process.",
+    tags: ["Python", "SQLite", "Local LLM", "Playwright", "Web Scraping", "Data Analytics", "Automation"],
+    metrics: [
+      { label: "Architecture", value: "Headless Pipeline" },
+      { label: "Privacy", value: "Local First" }
+    ],
+    links: [
+      { label: "Case Study", url: "/projects/job-os" }
+    ],
+    caseStudy: {
+      overview: "Automating the repetitive mechanics of the job search to focus entirely on human connection and skill-building.",
+      context: "The modern job search involves massive redundancy: filling out the same Workday forms, parsing identical job descriptions, and manually tracking state across spreadsheets.",
+      challenge: "Building a reliable, headless pipeline capable of navigating diverse application portals, extracting context via LLMs, and maintaining session states without relying on expensive SaaS tools.",
+      architecture: "A bifurcated system: JobOS (heavy client with SQLite and local LLM integration) and LeanJobOS (streamlined headless runner with automated reporting dashboards). Both rely on configured profiles and declarative YAML schemas.",
+      implementation: [
+        "Developed custom browser profile managers to maintain authenticated sessions across major ATS platforms.",
+        "Integrated local LLMs to parse job descriptions against resume embeddings to automatically draft targeted cover letters.",
+        "Built a robust SQLite schema to track application states, conversion rates, and follow-up schedules.",
+        "Implemented a dynamic reporting engine to visualize pipeline health."
+      ],
+      outcomes: [
+        "Eliminated 90% of manual data entry during the application process.",
+        "Created a reusable, fault-tolerant scraping architecture."
+      ],
+      learned: "When you automate a personal workflow, you realize how much cognitive overhead goes into simply managing state. Real productivity isn't working faster; it's delegating mechanical state management to a machine."
+    },
+    modes: ['engineer', 'builder', 'explorer'],
+    evidenceType: 'project'
   },
   {
     slug: "cloud-pixel-streaming",
@@ -94,7 +136,9 @@ export const projects: Project[] = [
         "Delivered smooth 60fps 1080p interactive streaming with end-to-end latency below 45ms across regional connections."
       ],
       learned: "Cloud engineering is as much about economic design as it is about architectural scalability. The smartest architecture is one that balances compute performance with disciplined cost-awareness."
-    }
+    },
+    modes: ['engineer', 'builder', 'journey'],
+    evidenceType: 'professional'
   },
   {
     slug: "lit-parking",
@@ -126,7 +170,9 @@ export const projects: Project[] = [
         "Successfully developed and showcased a fully functional working prototype with instant reservation roundtrip under 200ms."
       ],
       learned: "Designing mobile apps reinforced the primacy of user experience: when an interface handles error states gracefully and syncs instantly, users develop immediate trust."
-    }
+    },
+    modes: ['builder', 'creative'],
+    evidenceType: 'project'
   },
   {
     slug: "mindset-app",
@@ -158,6 +204,8 @@ export const projects: Project[] = [
         "Created an elegant, dependable daily companion app that exemplifies clean code principles and thoughtful human-centered product craft."
       ],
       learned: "Restraint is a core engineering and design superpower. Subtracting unnecessary features often creates significantly more value than adding them."
-    }
+    },
+    modes: ['builder', 'creative', 'life'],
+    evidenceType: 'project'
   }
 ];
