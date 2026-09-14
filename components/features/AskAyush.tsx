@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Sparkles, Send, X, Bot, User, ArrowRight, CornerDownLeft } from 'lucide-react';
 import { aiKnowledgeBase, findAIAnswer, QAItem } from '@/content/ai-knowledge';
 import { Badge } from '@/components/ui/Badge';
+import { useMode } from '@/lib/ModeContext';
 
 interface Message {
   sender: 'user' | 'assistant';
@@ -16,20 +17,34 @@ export const AskAyush: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
+  const { activeMode } = useMode();
   const [query, setQuery] = useState('');
+  
+  const getGreeting = () => {
+    switch(activeMode) {
+      case 'engineer': return "Hello! I'm Ayush's assistant. Ask me about his architecture work, Playwright automation, or distributed systems.";
+      case 'creative': return "Hello! Ask me about Ayush's design systems, watercolor studies, or UI engineering.";
+      case 'thinker': return "Hello. Feel free to ask about Ayush's engineering philosophy, his thoughts on automation, or how he approaches complex problems.";
+      default: return "Hello! I am Ayush's interactive digital assistant. Ask me anything about his work in fintech automation, IEEE quantum research, cloud infrastructure, or creative pursuits.";
+    }
+  };
+
   const [messages, setMessages] = useState<Message[]>([
-    {
-      sender: 'assistant',
-      text: "Hello! I am Ayush's interactive digital assistant. Ask me anything about his work in fintech automation, IEEE quantum research, cloud infrastructure, or creative pursuits.",
-    },
+    { sender: 'assistant', text: getGreeting() },
   ]);
 
-  const presetQuestions = [
-    "What is Ayush's current role at M2P?",
-    "Tell me about his IEEE-awarded quantum research.",
-    "What are his core technical skills?",
-    "What are his creative interests outside code?"
-  ];
+  const presetQuestions = activeMode === 'engineer' 
+    ? ["Tell me about his QA & Playwright work at M2P.", "How did he reduce cloud costs by 76%?", "What is his tech stack?"]
+    : activeMode === 'thinker'
+    ? ["What is his engineering philosophy?", "Why does he value interdisciplinary learning?", "What does he mean by 'zero hallucinations'?"]
+    : activeMode === 'creative'
+    ? ["Tell me about his UI/UX design process.", "Does he do analog art?", "What is his approach to CSS?"]
+    : [
+        "What is Ayush's current role at M2P?",
+        "Tell me about his IEEE-awarded quantum research.",
+        "What are his core technical skills?",
+        "What are his creative interests outside code?"
+      ];
 
   const handleSend = (textToSend?: string) => {
     const q = textToSend || query;

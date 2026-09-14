@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { labExperiments, LabExperiment } from '@/content/lab';
 import { FlaskConical, ArrowLeft, ArrowUpRight, Sparkles, Filter } from 'lucide-react';
+import { InteractiveLab } from '@/components/features/InteractiveLab';
 
 export default function LabPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -172,6 +173,13 @@ export default function LabPage() {
                 >
                   <strong style={{ color: 'var(--text-primary)' }}>Notes:</strong> {exp.notes}
                 </div>
+
+                {/* Interactive Demo Injection */}
+                {exp.id === 'exp-01' && <div style={{ marginBottom: '1rem' }}><InteractiveLab type="quantum" /></div>}
+                {exp.id === 'exp-02' && <div style={{ marginBottom: '1rem' }}><InteractiveLab type="qa" /></div>}
+                {exp.id === 'exp-04' && <div style={{ marginBottom: '1rem' }}><InteractiveLab type="system" /></div>}
+                {exp.id === 'exp-06' && <div style={{ marginBottom: '1rem' }}><InteractiveLab type="network" /></div>}
+                
               </div>
 
               <div>
