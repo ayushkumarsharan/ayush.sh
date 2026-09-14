@@ -3,31 +3,30 @@
 import React, { useRef, useEffect } from 'react';
 import { useUniverse } from '@/lib/UniverseContext';
 import { useMode } from '@/lib/ModeContext';
-import { universeGraph, UniverseNode } from '@/content/universe';
+import { universeGraph, UniverseNode, RelationType } from '@/content/universe';
+import { modeOrder } from '@/content/modes';
 
-interface NodeParticle {
+// Deterministic node positions
+interface RenderNode {
   id: string;
   x: number;
   y: number;
-  vx: number;
-  vy: number;
+  targetX: number;
+  targetY: number;
   radius: number;
-  baseRadius: number;
-  color: string;
+  targetRadius: number;
   alpha: number;
   targetAlpha: number;
-  pulsePhase: number;
-  isCoordinate: boolean;
-  orbitAngle: number;
+  color: string;
+  type: string;
+  priority: number;
 }
 
 export const LivingAtmosphereCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  
   const { activeNode, hoveredNode, relatedNodes, isLowSignalMode } = useUniverse();
   const { activeMode } = useMode();
 
-  // Mutable ref to access React state inside the rAF loop without restarting it
   const stateRef = useRef({
     activeNode,
     hoveredNode,
@@ -50,6 +49,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     let width = window.innerWidth;
     let height = window.innerHeight;
     let dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const isMobile = width < 768;
 
     const setupCanvasSize = () => {
       if (!canvas || !ctx) return;
@@ -70,185 +70,195 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     window.addEventListener('resize', setupCanvasSize);
     window.addEventListener('orientationchange', setupCanvasSize);
 
-    // Initialize particles from the Universe Graph
-    const nodes = Object.values(universeGraph);
-    const particles: NodeParticle[] = nodes.map((node) => {
+    // Initialize deterministic nodes
+    const renderNodes: Record<string, RenderNode> = {};
+    Object.values(universeGraph).forEach((node) => {
       const isCoord = node.type === 'mode_coordinate';
-      return {
+      renderNodes[node.id] = {
         id: node.id,
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        baseRadius: isCoord ? 3 : (node.priority > 8 ? 2.5 : 1.5),
-        radius: 2,
-        color: isCoord ? 'rgba(245, 158, 11,' : 'rgba(20, 184, 166,',
+        x: width / 2,
+        y: height / 2,
+        targetX: width / 2,
+        targetY: height / 2,
+        radius: 0,
+        targetRadius: isCoord ? 4 : (node.priority > 8 ? 3 : 1.5),
         alpha: 0,
-        targetAlpha: 0.5,
-        pulsePhase: Math.random() * Math.PI * 2,
-        isCoordinate: isCoord,
-        orbitAngle: Math.random() * Math.PI * 2,
+        targetAlpha: 0,
+        color: isCoord ? 'rgba(245, 158, 11,' : 'rgba(20, 184, 166,',
+        type: node.type,
+        priority: node.priority,
       };
     });
 
-    let pointer = { x: -1000, y: -1000, isActive: false };
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
-      pointer.isActive = true;
+    const getRelationStyle = (type: RelationType, alpha: number) => {
+      switch (type) {
+        case 'worked-with': return { color: `rgba(20, 184, 166, ${alpha})`, dash: [] }; // Solid structural
+        case 'built-with': return { color: `rgba(14, 165, 233, ${alpha})`, dash: [4, 4] }; // Technical energy
+        case 'achieved': return { color: `rgba(245, 158, 11, ${alpha * 1.5})`, dash: [] }; // Luminous
+        case 'explores': return { color: `rgba(139, 92, 246, ${alpha})`, dash: [2, 6] }; // Orbital/Loose
+        case 'inspired-by': return { color: `rgba(148, 163, 184, ${alpha * 0.6})`, dash: [1, 8] }; // Distant
+        case 'related-to': return { color: `rgba(45, 212, 191, ${alpha * 0.8})`, dash: [] }; // Standard
+        default: return { color: `rgba(20, 184, 166, ${alpha})`, dash: [] };
+      }
     };
-    const handleMouseLeave = () => { pointer.isActive = false; };
-    
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('mouseleave', handleMouseLeave);
 
     let time = 0;
-    
+    let cameraX = width / 2;
+    let cameraY = height / 2;
+    let targetCameraX = width / 2;
+    let targetCameraY = height / 2;
+
     const render = () => {
       time += 0.016;
       ctx.clearRect(0, 0, width, height);
-
       const state = stateRef.current;
-      
-      // If Low Signal Mode is ON, we drastically reduce rendering
+
       if (state.isLowSignalMode) {
-        ctx.fillStyle = 'rgba(20, 184, 166, 0.05)';
+        ctx.fillStyle = 'rgba(20, 184, 166, 0.02)';
         ctx.fillRect(0, 0, width, height);
         animationId = requestAnimationFrame(render);
         return;
       }
 
-      const targetCenter = state.hoveredNode || state.activeNode;
+      // Camera interpolation
+      cameraX += (targetCameraX - cameraX) * 0.05;
+      cameraY += (targetCameraY - cameraY) * 0.05;
+
+      const centerNodeId = state.hoveredNode || state.activeNode;
       const relatedIds = new Set(state.relatedNodes.map(n => n.id));
 
-      // 1. Update Particle Physics & Alpha based on Semantic State
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const node = universeGraph[p.id];
+      // --- LAYOUT ENGINE ---
+      if (!state.activeMode && !centerNodeId) {
+        // ARRIVAL STATE: Only show the 6 mode coordinates in a large constellation
+        targetCameraX = width / 2;
+        targetCameraY = height / 2;
         
-        // Determine semantic state
-        const isTarget = p.id === targetCenter;
-        const isRelated = relatedIds.has(p.id);
-        const matchesMode = state.activeMode ? node.modes.includes(state.activeMode) : true;
-        const isArrival = !state.activeMode;
+        modeOrder.filter(m => m !== 'life').forEach((mId, index) => {
+          const id = `coord-${mId}`;
+          const rn = renderNodes[id];
+          if (!rn) return;
+          const angle = (index / 6) * Math.PI * 2 + (time * 0.05); // slow rotation
+          const radius = isMobile ? height * 0.35 : height * 0.42;
+          rn.targetX = width / 2 + Math.cos(angle) * radius;
+          rn.targetY = height / 2 + Math.sin(angle) * radius;
+          rn.targetAlpha = 0.8;
+          rn.targetRadius = 4;
+        });
 
-        // Visual Weight Logic
-        if (targetCenter) {
-          if (isTarget) p.targetAlpha = 1.0;
-          else if (isRelated) p.targetAlpha = 0.7;
-          else p.targetAlpha = 0.05;
-        } else {
-          // No specific target focused
-          if (isArrival) {
-            p.targetAlpha = p.isCoordinate ? 0.8 : 0.15;
-          } else {
-            p.targetAlpha = matchesMode ? 0.6 : 0.1;
+        // Hide everything else
+        Object.values(renderNodes).forEach(rn => {
+          if (rn.type !== 'mode_coordinate') rn.targetAlpha = 0;
+        });
+      } 
+      else if (centerNodeId) {
+        // MESO/MICRO STATE: Focused on a specific node
+        targetCameraX = width * 0.75; // Move camera to right side (since text is usually left)
+        targetCameraY = height / 2;
+
+        const centerRn = renderNodes[centerNodeId];
+        if (centerRn) {
+          centerRn.targetX = targetCameraX;
+          centerRn.targetY = targetCameraY;
+          centerRn.targetAlpha = 1;
+          centerRn.targetRadius = 5;
+        }
+
+        // Arrange related nodes in an orbit
+        const relNodes = Array.from(relatedIds);
+        relNodes.forEach((id, index) => {
+          const rn = renderNodes[id];
+          if (!rn) return;
+          const angle = (index / relNodes.length) * Math.PI * 2 + (time * 0.1);
+          const orbitDist = 180 + (10 - rn.priority) * 15; // Higher priority = closer
+          rn.targetX = targetCameraX + Math.cos(angle) * orbitDist;
+          rn.targetY = targetCameraY + Math.sin(angle) * orbitDist;
+          rn.targetAlpha = 0.6;
+          rn.targetRadius = rn.priority > 8 ? 3 : 2;
+        });
+
+        // Hide unrelated
+        Object.values(renderNodes).forEach(rn => {
+          if (rn.id !== centerNodeId && !relatedIds.has(rn.id) && rn.type !== 'mode_coordinate') {
+            rn.targetAlpha = 0.05; // Peripheral noise
           }
-        }
+        });
+      } 
+      else if (state.activeMode) {
+        // MACRO STATE: Mode selected, show mode-specific hierarchy
+        targetCameraX = width / 2;
+        targetCameraY = height / 2;
+        
+        const modeNodes = Object.values(universeGraph).filter(n => n.modes.includes(state.activeMode!));
+        modeNodes.forEach((node, index) => {
+          const rn = renderNodes[node.id];
+          if (!rn) return;
+          
+          // Deterministic organic scatter based on priority
+          const angle = (index / modeNodes.length) * Math.PI * 2;
+          const dist = (10 - node.priority) * 60 + 100;
+          
+          rn.targetX = targetCameraX + Math.cos(angle) * dist + Math.sin(time * 0.2 + index) * 10;
+          rn.targetY = targetCameraY + Math.sin(angle) * dist + Math.cos(time * 0.2 + index) * 10;
+          rn.targetAlpha = node.priority > 8 ? 0.7 : 0.3;
+          rn.targetRadius = node.priority > 8 ? 3 : 1.5;
+        });
 
-        // Smooth alpha transition
-        p.alpha += (p.targetAlpha - p.alpha) * 0.05;
-
-        // Physics Forces
-        if (isTarget) {
-          // Pull target gently towards center-right of screen
-          const tx = width * 0.7;
-          const ty = height * 0.5;
-          p.vx += (tx - p.x) * 0.002;
-          p.vy += (ty - p.y) * 0.002;
-        } else if (targetCenter && isRelated) {
-          // Orbit the target node
-          const targetParticle = particles.find(pt => pt.id === targetCenter);
-          if (targetParticle) {
-            p.orbitAngle += 0.005;
-            const orbitRadius = 150 + (node.priority * 10);
-            const tx = targetParticle.x + Math.cos(p.orbitAngle) * orbitRadius;
-            const ty = targetParticle.y + Math.sin(p.orbitAngle) * orbitRadius;
-            p.vx += (tx - p.x) * 0.003;
-            p.vy += (ty - p.y) * 0.003;
+        Object.values(renderNodes).forEach(rn => {
+          if (!modeNodes.find(n => n.id === rn.id) && rn.type !== 'mode_coordinate') {
+            rn.targetAlpha = 0;
           }
-        } else {
-          // Idle drift
-          p.vx += (Math.random() - 0.5) * 0.02;
-          p.vy += (Math.random() - 0.5) * 0.02;
-        }
-
-        // Friction
-        p.vx *= 0.92;
-        p.vy *= 0.92;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Wrapping
-        if (p.x < -50) p.x = width + 50;
-        if (p.x > width + 50) p.x = -50;
-        if (p.y < -50) p.y = height + 50;
-        if (p.y > height + 50) p.y = -50;
-
-        // Render Particle
-        if (p.alpha > 0.01) {
-          p.pulsePhase += 0.05;
-          p.radius = p.baseRadius * (1 + Math.sin(p.pulsePhase) * 0.2);
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius * 2, 0, Math.PI * 2);
-          ctx.fillStyle = `${p.color} ${p.alpha * 0.4})`;
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `${p.color} ${p.alpha})`;
-          ctx.fill();
-        }
+        });
       }
 
-      // 2. Draw Semantic Constellation Lines
-      ctx.lineWidth = 1;
-      for (let i = 0; i < particles.length; i++) {
-        const p1 = particles[i];
-        if (p1.alpha < 0.05) continue;
+      // --- RENDER EDGES (SEMANTIC LINES) ---
+      // Draw lines only between visible nodes to avoid spider webs
+      ctx.lineWidth = 1.2;
+      const visibleNodes = Object.values(renderNodes).filter(n => n.alpha > 0.05);
+      
+      visibleNodes.forEach(n1 => {
+        const uNode = universeGraph[n1.id];
+        if (!uNode) return;
         
-        const node1 = universeGraph[p1.id];
-        
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          if (p2.alpha < 0.05) continue;
+        uNode.relationships.forEach(rel => {
+          const n2 = renderNodes[rel.targetId];
+          if (n2 && n2.alpha > 0.05) {
+            const edgeAlpha = Math.min(n1.alpha, n2.alpha) * 0.8;
+            if (edgeAlpha < 0.05) return;
 
-          // Only draw lines if there is a real semantic relationship OR if they are both highlighted by mode
-          const hasDirectRelation = node1.relationships.some(r => r.targetId === p2.id) || 
-                                    universeGraph[p2.id].relationships.some(r => r.targetId === p1.id);
-          
-          let drawLine = false;
-          let lineAlpha = 0;
-
-          if (targetCenter) {
-             if (hasDirectRelation && (p1.id === targetCenter || p2.id === targetCenter)) {
-               drawLine = true;
-               lineAlpha = Math.min(p1.alpha, p2.alpha) * 0.6;
-             } else if (hasDirectRelation && relatedIds.has(p1.id) && relatedIds.has(p2.id)) {
-               drawLine = true;
-               lineAlpha = Math.min(p1.alpha, p2.alpha) * 0.3;
-             }
-          } else {
-             // Idle Mode: Draw lines between related items nearby
-             const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-             if (hasDirectRelation && dist < 250) {
-               drawLine = true;
-               lineAlpha = (1 - dist/250) * Math.min(p1.alpha, p2.alpha) * 0.4;
-             }
-          }
-
-          if (drawLine) {
+            const style = getRelationStyle(rel.type, edgeAlpha);
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(20, 184, 166, ${lineAlpha})`;
+            ctx.setLineDash(style.dash);
+            ctx.moveTo(n1.x, n1.y);
+            ctx.lineTo(n2.x, n2.y);
+            ctx.strokeStyle = style.color;
             ctx.stroke();
           }
+        });
+      });
+      ctx.setLineDash([]); // Reset
+
+      // --- RENDER NODES ---
+      Object.values(renderNodes).forEach(rn => {
+        // Interpolate
+        rn.x += (rn.targetX - rn.x) * 0.08;
+        rn.y += (rn.targetY - rn.y) * 0.08;
+        rn.alpha += (rn.targetAlpha - rn.alpha) * 0.08;
+        rn.radius += (rn.targetRadius - rn.radius) * 0.1;
+
+        if (rn.alpha > 0.02) {
+          // Glow
+          ctx.beginPath();
+          ctx.arc(rn.x, rn.y, rn.radius * 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = `${rn.color} ${rn.alpha * 0.3})`;
+          ctx.fill();
+
+          // Core
+          ctx.beginPath();
+          ctx.arc(rn.x, rn.y, rn.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `${rn.color} ${rn.alpha})`;
+          ctx.fill();
         }
-      }
+      });
 
       animationId = requestAnimationFrame(render);
     };
@@ -258,8 +268,6 @@ export const LivingAtmosphereCanvas: React.FC = () => {
     return () => {
       window.removeEventListener('resize', setupCanvasSize);
       window.removeEventListener('orientationchange', setupCanvasSize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(animationId);
     };
   }, []);
@@ -278,10 +286,7 @@ export const LivingAtmosphereCanvas: React.FC = () => {
       }}
       aria-hidden="true"
     >
-      <canvas
-        ref={canvasRef}
-        style={{ width: '100%', height: '100%', display: 'block' }}
-      />
+      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
     </div>
   );
 };

@@ -10,6 +10,7 @@ import { LivingAtmosphereCanvas } from '@/components/features/LivingAtmosphereCa
 import { ModeProvider } from '@/lib/ModeContext';
 import { UniverseProvider } from '@/lib/UniverseContext';
 import { EvidenceToggle } from '@/components/ui/EvidenceToggle';
+import { UniverseDebug } from '@/components/features/UniverseDebug';
 import { Suspense } from 'react';
 
 export const metadata: Metadata = {
@@ -118,6 +119,8 @@ export default function RootLayout({
                 <main id="main-content" style={{ position: 'relative', zIndex: 1 }}>
                   {children}
                 </main>
+                <EvidenceToggle />
+                <UniverseDebug />
               </LayoutWrapper>
             </UniverseProvider>
           </ModeProvider>
