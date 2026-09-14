@@ -28,12 +28,13 @@ export const experiences: Experience[] = [
     summary: "Participating directly in production sprints across development and quality engineering, building Playwright POM frameworks, and validating backend APIs.",
     tags: ["Playwright", "TypeScript", "POM Architecture", "REST API", "Microservices", "Fintech", "CI/CD", "Kafka"],
     highlights: [
-      "Contribute 4-5 feature and bug-fix tasks per production sprint while concurrently validating other developers' work.",
-      "Implement feature enhancements and production bug fixes by understanding existing code structure and tracing application behavior.",
-      "Review and refine AI-generated code for correctness, architectural fit, edge cases, and integration impact before validation.",
-      "Build resilient Playwright-based E2E automation frameworks using TypeScript and modular Page Object Model (POM) architecture.",
-      "Validate fintech microservices, e-commerce checkout flows, and backend APIs through regression, sanity, hotfix, and release testing.",
-      "Design prompt-driven backend API automation workflows for Merchant Management Systems utilizing structured JSON payload validation."
+      "Participate directly in production sprints across development and quality engineering, contributing to 4-5 feature and bug-fix tasks per sprint while also validating other developers' work.",
+      "Implement feature enhancements and production bug fixes by understanding existing code structure, tracing application behavior, and using AI-assisted development to accelerate implementation and debugging.",
+      "Review and refine AI-generated code for correctness, architectural fit, edge cases, unnecessary changes, and integration impact before validation.",
+      "Build Playwright-based end-to-end automation frameworks in TypeScript using Page Object Model (POM) architecture for fintech platforms.",
+      "Validate fintech microservices, e-commerce checkout flows, card systems, and backend APIs through regression, sanity, hotfix, deployment, and release testing.",
+      "Collaborate with product and development teams to isolate defects, understand root causes, and improve application stability across distributed environments.",
+      "Design prompt-driven backend API automation workflows for Merchant Management Systems using structured JSON payload validation."
     ],
     metrics: [
       { label: "Sprint Output", value: "4-5 Fixes/Features" },

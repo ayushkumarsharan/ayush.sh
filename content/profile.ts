@@ -47,8 +47,8 @@ export const profile: Profile = {
   phoneVisibility: 'request',
   linkedin: "https://linkedin.com/in/ayush-kumar-sharan",
   github: "https://github.com/ayushkumarsharan",
-  bioBrief: "Systems & Automation Engineer with hands-on experience in QA Automation, Cloud Infrastructure, API Testing, and DevOps workflows across fintech and aviation domains. University Gold Medallist and IEEE-published researcher.",
-  narrative: `I work at the intersection of quality engineering, cloud systems, and thoughtful design. At M2P, I build scalable end-to-end automation frameworks for critical fintech microservices and payment rails—where reliability isn't just an aspiration, but a 24/7 reality. Before that, at Thales, I worked with avionics and inflight entertainment systems where system fault-tolerance is mission-critical.
+  bioBrief: "Systems and Automation Engineer working across software development, QA automation, cloud infrastructure, backend API validation, and production systems. I approach engineering problems end-to-end: understand the system, investigate failure modes, implement or automate a solution, and verify the result.",
+  narrative: `I work at the intersection of quality engineering, cloud systems, and thoughtful design. At M2P, my work spans production sprint development and QA, including feature and bug-fix implementation, AI-assisted coding, Playwright automation, API validation, and release testing across fintech platforms. Before that, at Thales, I worked with avionics and inflight entertainment systems where system fault-tolerance is mission-critical.
 
 I'm naturally drawn to problems spanning multiple disciplines. My IEEE-published research explored the convergence of quantum networking and machine learning for advanced signal processing, while my creative experiments range from 3D environment optimization in Unreal/Unity to visual arts, watercolor, and interactive tools.
 
