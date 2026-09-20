@@ -1,449 +1,178 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
+import ModeSwitcher from '@/components/ui/ModeSwitcher';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X, Search, Sparkles, Bot } from 'lucide-react';
-import { siteConfig } from '@/content/site';
-import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher';
-import { CommandPalette } from '@/components/layout/CommandPalette';
-import { useMode } from '@/lib/ModeContext';
-import { useUniverse } from '@/lib/UniverseContext';
-import { universeGraph } from '@/content/universe';
 
-export const Navigation: React.FC<{ onOpenAskAI?: () => void }> = ({ onOpenAskAI }) => {
-  const { activeMode } = useMode();
-  const { activeNode } = useUniverse();
+export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCommandOpen, setIsCommandOpen] = useState(false);
-  const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsCommandOpen((prev) => !prev);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navLinks = [
+    { name: 'Artifacts', href: '/#artifacts' },
+    { name: 'Tools', href: '/#tools' },
+    { name: 'Certifications', href: '/#certifications' },
+    { name: 'Contact', href: '/#contact' }
+  ];
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
-    <>
-      <header
+    <motion.header
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        transition: 'all 0.3s ease',
+        background: isScrolled ? 'var(--bg-surface)' : 'transparent',
+        backdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
+        WebkitBackdropFilter: isScrolled ? 'blur(20px) saturate(180%)' : 'none',
+        borderBottom: isScrolled ? '1px solid var(--border-subtle)' : '1px solid transparent',
+        color: 'var(--text-primary)'
+      }}
+    >
+      <div
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 9999,
-          padding: '0.65rem 1rem',
-          backgroundColor: 'var(--bg-translucent)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: isScrolled ? '1px solid var(--border-medium)' : '1px solid var(--border-subtle)',
-          boxShadow: isScrolled ? 'var(--shadow-md)' : 'var(--shadow-sm)',
-          transition: 'border-color var(--transition-fast), box-shadow var(--transition-fast)',
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '1.2rem 2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}
       >
-        <div
-          className="container"
+        <Link 
+          href="/" 
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.5rem',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            fontSize: '1rem',
+            textDecoration: 'none',
+            color: 'inherit',
+            textTransform: 'uppercase'
           }}
         >
-          {/* Brand Wordmark & Active Pulse */}
-          <Link
-            href="/"
+          AYUSH KUMAR SHARAN
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav
+          style={{
+            display: 'flex',
+            gap: '2.5rem',
+            alignItems: 'center'
+          }}
+          className="desktop-nav"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                textTransform: 'uppercase',
+                fontSize: '0.8rem',
+                letterSpacing: '0.1em',
+                textDecoration: 'none',
+                color: 'inherit',
+                opacity: 0.7,
+                transition: 'opacity 0.2s ease, color 0.2s ease'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.7')}
+            >
+              {link.name}
+            </Link>
+          ))}
+          <ModeSwitcher />
+        </nav>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          className="mobile-menu-btn"
+          onClick={toggleMobileMenu}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'inherit',
+            cursor: 'pointer',
+            padding: '0.5rem',
+          }}
+          aria-label="Toggle Menu"
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              textDecoration: 'none',
-              padding: '0.2rem 0.35rem',
-              borderRadius: 'var(--radius-md)',
-              transition: 'all var(--transition-fast)',
-              flexShrink: 0,
+              background: 'var(--bg-surface-elevated)',
+              borderBottom: '1px solid var(--border-subtle)',
+              overflow: 'hidden',
+              color: 'var(--text-primary)',
+              backdropFilter: 'blur(30px) saturate(200%)'
             }}
           >
-            <span
+            <nav
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '28px',
-                height: '28px',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: 'var(--accent-primary)',
-                color: '#ffffff',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 700,
-                fontSize: '0.85rem',
-                boxShadow: '0 0 12px var(--accent-glow)',
-                flexShrink: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '2rem',
+                gap: '2rem'
               }}
             >
-              A
-            </span>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 600,
-                  fontSize: 'clamp(0.95rem, 2.5vw, 1.1rem)',
-                  color: 'var(--text-primary)',
-                  letterSpacing: '0.02em',
-                  lineHeight: 1.2,
-                  whiteSpace: 'nowrap',
-                  textTransform: 'uppercase',
-                }}
-              >
-                AYUSH KUMAR SHARAN
-              </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '0.1rem' }}>
-                <span
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--accent-primary)',
-                    boxShadow: '0 0 6px var(--accent-primary)',
-                  }}
-                  className="pulse-dot"
-                />
-                <span
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
-                    color: 'var(--accent-primary)',
-                    letterSpacing: '0.06em',
                     textTransform: 'uppercase',
+                    fontSize: '1rem',
+                    letterSpacing: '0.1em',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    opacity: 0.9
                   }}
                 >
-                  ENGINEER • BUILDER
-                </span>
-              </div>
-            </div>
-          </Link>
-
-          {/* Removed Coordinate Indicator per redesign directive */}
-
-          {/* Desktop Floating Navigation Links */}
-          <nav
-            style={{
-              display: 'none',
-              alignItems: 'center',
-              gap: '0.2rem',
-              padding: '0.3rem 0.4rem',
-              backgroundColor: 'var(--bg-surface-elevated)',
-              borderRadius: 'var(--radius-full)',
-              border: '1px solid var(--border-medium)',
-              boxShadow: 'var(--shadow-sm)',
-            }}
-            className="desktop-nav"
-          >
-            {siteConfig.navLinks.map((link) => {
-              const isActive =
-                link.href === '/'
-                  ? pathname === '/'
-                  : pathname.startsWith(link.href.replace('/#', ''));
-
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  style={{
-                    padding: '0.4rem 0.8rem',
-                    fontSize: '0.825rem',
-                    fontWeight: 500,
-                    color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    borderRadius: 'var(--radius-full)',
-                    backgroundColor: isActive ? 'var(--bg-surface)' : 'transparent',
-                    border: isActive ? '1px solid var(--border-subtle)' : '1px solid transparent',
-                    transition: 'all var(--transition-fast)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.35rem',
-                    position: 'relative',
-                  }}
-                  className="nav-link-item"
-                >
-                  <span>{link.label}</span>
-                  {link.badge && (
-                    <span
-                      style={{
-                        fontSize: '0.625rem',
-                        fontFamily: 'var(--font-mono)',
-                        padding: '0.1rem 0.35rem',
-                        borderRadius: 'var(--radius-full)',
-                        backgroundColor: 'var(--accent-subtle)',
-                        color: 'var(--accent-primary)',
-                        lineHeight: 1,
-                      }}
-                    >
-                      {link.badge}
-                    </span>
-                  )}
+                  {link.name}
                 </Link>
-              );
-            })}
-          </nav>
-
-          {/* Action Tools (Search, Ask AI, Theme Toggle, Mobile Menu) */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              flexShrink: 0,
-            }}
-          >
-            {/* Quick Search & Command Palette Trigger */}
-            <a
-              href="https://github.com/ayushkumarsharan"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub Profile"
-              title="GitHub Profile"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '34px',
-                height: '34px',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-medium)',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-              className="action-github-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                <path d="M9 18c-4.51 2-5-2-7-2" />
-              </svg>
-            </a>
-
-            <button
-              onClick={() => setIsCommandOpen(true)}
-              aria-label="Quick Search & Navigation (Cmd/Ctrl + K)"
-              title="Quick Search & Actions (Cmd/Ctrl + K)"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.4rem',
-                padding: '0.4rem 0.65rem',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-medium)',
-                color: 'var(--text-secondary)',
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-                minWidth: '34px',
-                height: '34px',
-              }}
-              className="action-search-btn"
-            >
-              <Search size={15} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
-              <span className="search-label" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem' }}>
-                Search <span style={{ opacity: 0.6 }}>⌘K</span>
-              </span>
-            </button>
-
-            {/* Ask AI Assistant button */}
-            {onOpenAskAI && (
-              <button
-                onClick={onOpenAskAI}
-                aria-label="Explore with AI Assistant"
-                title="Ask questions about Ayush"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.35rem',
-                  padding: '0.4rem 0.65rem',
-                  borderRadius: 'var(--radius-full)',
-                  backgroundColor: 'var(--accent-subtle)',
-                  border: '1px solid var(--accent-border)',
-                  color: 'var(--accent-primary)',
-                  fontSize: '0.8rem',
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all var(--transition-fast)',
-                  height: '34px',
-                }}
-                className="action-ai-btn interactive-hover"
-              >
-                <Bot size={15} />
-                <span className="ai-label" style={{ fontFamily: 'var(--font-mono)' }}>Ask Ayush</span>
-              </button>
-            )}
-
-            {/* Theme Toggle */}
-            <ThemeSwitcher />
-
-            {/* Mobile Hamburger Toggle */}
-            <button
-              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              aria-label="Toggle navigation menu"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '34px',
-                height: '34px',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--bg-surface-elevated)',
-                border: '1px solid var(--border-medium)',
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-                flexShrink: 0,
-              }}
-              className="mobile-menu-btn"
-            >
-              {isMobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Drawer Menu */}
-      {isMobileMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'var(--bg-translucent)',
-            backdropFilter: 'blur(24px)',
-            zIndex: 9998,
-            padding: '5rem 1.5rem 2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            animation: 'fadeIn 0.2s ease-out',
-          }}
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {siteConfig.navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                style={{
-                  padding: '0.875rem 1.25rem',
-                  fontSize: '1.15rem',
-                  fontFamily: 'var(--font-display)',
-                  color: 'var(--text-primary)',
-                  backgroundColor: 'var(--bg-surface)',
-                  borderRadius: 'var(--radius-lg)',
-                  border: '1px solid var(--border-subtle)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span>{link.label}</span>
-                {link.badge && (
-                  <span
-                    style={{
-                      fontSize: '0.7rem',
-                      fontFamily: 'var(--font-mono)',
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: 'var(--radius-full)',
-                      backgroundColor: 'var(--accent-subtle)',
-                      color: 'var(--accent-primary)',
-                    }}
-                  >
-                    {link.badge}
-                  </span>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          <div
-            style={{
-              padding: '1rem',
-              textAlign: 'center',
-              fontSize: '0.8rem',
-              color: 'var(--text-tertiary)',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            AYUSH KUMAR SHARAN • SYSTEMS & CREATIVE TECH
-          </div>
-        </div>
-      )}
-
-      {/* Global Command Palette */}
-      <CommandPalette isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
-
-      <style jsx global>{`
-        @keyframes pulseGlow {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.4); opacity: 0.6; }
-        }
-        .pulse-dot {
-          animation: pulseGlow 2.5s infinite ease-in-out;
-        }
-        @media (min-width: 860px) {
-          .desktop-nav {
-            display: flex !important;
-          }
-          .mobile-menu-btn {
-            display: none !important;
-          }
-          .search-label, .ai-label {
-            display: inline !important;
-          }
-        }
-        @media (max-width: 859px) {
-          .desktop-nav {
-            display: none !important;
-          }
-          .mobile-menu-btn {
-            display: inline-flex !important;
-          }
-          /* On mobile: Compact icon-only buttons for Search & Ask AI */
-          .search-label, .ai-label, .coordinate-indicator-label {
-            display: none !important;
-          }
-          .action-search-btn, .action-ai-btn {
-            padding: 0 !important;
-            width: 34px !important;
-            height: 34px !important;
-          }
-          .coordinate-indicator-btn {
-            padding: 0.35rem 0.5rem !important;
-          }
-        }
-      `}</style>
-    </>
+              ))}
+              <div style={{ marginTop: '1rem', paddingTop: '2rem', borderTop: '1px solid var(--border-subtle)' }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', opacity: 0.6, marginBottom: '1rem' }}>ATMOSPHERE</p>
+                <ModeSwitcher />
+              </div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
-};
+}

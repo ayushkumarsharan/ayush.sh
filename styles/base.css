@@ -82,3 +82,9 @@ h1, h2, h3, .font-display {
 .skip-to-content:focus {
   top: 1rem;
 }
+
+.mobile-menu-btn { display: none !important; }
+@media (max-width: 900px) {
+  .desktop-nav { display: none !important; }
+  .mobile-menu-btn { display: block !important; }
+}

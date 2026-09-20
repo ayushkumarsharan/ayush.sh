@@ -1,198 +1,105 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { SectionHeading } from '@/components/ui/SectionHeading';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { projects } from '@/content/projects';
-import { ArrowRight, BookOpen, Award, ExternalLink, Sparkles, Layers } from 'lucide-react';
-import { useMode } from '@/lib/ModeContext';
 
-export const ProjectsSection: React.FC = () => {
-  const { activeMode } = useMode();
+export default function ProjectsSection() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const cardVariants: any = {
+    hidden: { opacity: 0, y: 30, scale: 0.98 },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { duration: 0.6, ease: "easeOut" } 
+    }
+  };
+
   return (
-    <section id="projects" className="section-wrapper">
-      <div className="container">
-        <SectionHeading
-          number="06"
-          label="The Archive"
-          title="Things I've Built & Researched"
-          subtitle="A progressive archive ranging from IEEE-awarded quantum signal processing to mobile platforms and cloud streaming."
-        />
+    <section id="artifacts" style={{ padding: '8rem 2rem', background: 'var(--bg-primary)', position: 'relative' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" as any }}
+          style={{ marginBottom: '6rem' }}
+        >
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.5rem, 5vw, 4rem)', margin: '0 0 1rem 0', color: 'var(--text-primary)' }}>
+            Artifacts & Exhibitions
+          </h2>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '600px' }}>
+            Selected implementations where architecture meets purpose. Click any project to reveal the engineering interface.
+          </p>
+        </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-6)' }}>
-          {projects.map((proj, index) => {
-            const isQuantum = proj.slug === 'quantum-signal-processing';
-
-            return (
-              <div key={proj.slug} className="scroll-reveal" style={{ animationDelay: `${index * 100}ms` }}>
-                <Card
-                  variant={proj.featured ? 'elevated' : 'surface'}
-                  padding="lg"
+        <motion.div 
+          variants={containerVariants as any}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}
+        >
+          {[...projects].reverse().map((project, idx) => (
+            <Link key={idx} href={'/projects/' + project.slug} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <motion.div
+                variants={cardVariants as any}
+                whileHover={{ y: -8, boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  border: proj.featured ? '1px solid var(--accent-border)' : '1px solid var(--border-medium)',
+                  display: 'grid',
+                  gridTemplateColumns: 'minmax(0, 1fr)',
+                  gap: '2rem',
+                  padding: '3rem',
+                  background: 'var(--bg-surface)',
+                  borderRadius: 'var(--radius-lg)',
+                  border: '1px solid var(--border-subtle)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  cursor: 'pointer'
                 }}
               >
-                <div>
-                  {/* Category & Status */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-3)' }}>
-                    <Badge variant={proj.featured ? 'accent' : 'subtle'} size="sm">
-                      {proj.category}
-                    </Badge>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-                      {proj.timeline}
-                    </span>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                    <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', margin: 0, color: 'var(--text-primary)' }}>
+                      {project.title}
+                    </h3>
                   </div>
-
-                  <h3
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.5rem',
-                      color: 'var(--text-primary)',
-                      marginBottom: '0.25rem',
-                    }}
-                  >
-                    {proj.title}
-                  </h3>
-
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-body)',
-                      fontSize: '0.9rem',
-                      color: 'var(--accent-primary)',
-                      fontWeight: 500,
-                      marginBottom: 'var(--space-4)',
-                    }}
-                  >
-                    {proj.subtitle}
-                  </div>
-
-                  <p
-                    style={{
-                      fontSize: '0.925rem',
-                      color: 'var(--text-secondary)',
-                      lineHeight: 1.6,
-                      marginBottom: 'var(--space-6)',
-                    }}
-                  >
-                    {proj.summary}
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem', maxWidth: '800px' }}>
+                    {project.summary}
                   </p>
-
-                  {/* Mode-Specific: Technical Architecture Overview */}
-                  {(activeMode === 'builder' || activeMode === 'engineer') && proj.caseStudy && (
-                    <div style={{
-                      marginBottom: 'var(--space-6)',
-                      padding: '0.75rem',
-                      backgroundColor: 'var(--bg-surface-elevated)',
-                      borderLeft: '2px solid var(--accent-primary)',
-                      borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
-                    }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '0.7rem',
-                        textTransform: 'uppercase',
-                        color: 'var(--accent-primary)',
-                        marginBottom: '0.5rem'
+                  
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '2rem' }}>
+                    {project.tags.map((tag, i) => (
+                      <span key={i} style={{
+                        fontFamily: 'var(--font-mono)', fontSize: '0.85rem', padding: '0.4rem 0.8rem',
+                        background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-full)', color: 'var(--text-tertiary)'
                       }}>
-                        <Layers size={12} /> Tech Architecture
-                      </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                        {proj.tags?.map(stack => (
-                          <span key={stack} style={{
-                            fontSize: '0.75rem',
-                            color: 'var(--text-secondary)',
-                            background: 'var(--bg-primary)',
-                            padding: '0.15rem 0.4rem',
-                            borderRadius: '4px',
-                            border: '1px solid var(--border-subtle)'
-                          }}>
-                            {stack}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Recognition Badges if any */}
-                  {proj.recognition && proj.recognition.length > 0 && (
-                    <div
-                      style={{
-                        padding: '0.75rem',
-                        backgroundColor: 'var(--bg-surface-subtle)',
-                        borderRadius: 'var(--radius-md)',
-                        marginBottom: 'var(--space-6)',
-                        border: '1px solid var(--border-subtle)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.35rem',
-                          fontFamily: 'var(--font-mono)',
-                          fontSize: '0.725rem',
-                          color: 'var(--accent-warm)',
-                          marginBottom: '0.3rem',
-                        }}
-                      >
-                        <Award size={13} />
-                        <span>Peer-Reviewed Recognition</span>
-                      </div>
-                      <ul style={{ fontSize: '0.8rem', color: 'var(--text-primary)', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        {proj.recognition.map((rec, i) => (
-                          <li key={i}>• {rec}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Tags */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: 'var(--space-6)' }}>
-                    {proj.tags.map((t) => (
-                      <Badge key={t} variant="subtle" size="sm">
-                        {t}
-                      </Badge>
+                        {tag}
+                      </span>
                     ))}
                   </div>
+                  <div style={{
+                    fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--accent-primary)',
+                    textTransform: 'uppercase', letterSpacing: '0.1em'
+                  }}>
+                    Read Case Study →
+                  </div>
                 </div>
-
-                {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderTop: '1px solid var(--border-subtle)', paddingTop: 'var(--space-4)' }}>
-                  {isQuantum ? (
-                    <Button
-                      href="/research"
-                      variant="primary"
-                      size="sm"
-                      icon={<BookOpen size={14} />}
-                    >
-                      Interactive Research Blueprint
-                    </Button>
-                  ) : (
-                    <Button
-                      href={`/projects/${proj.slug}`}
-                      variant="secondary"
-                      size="sm"
-                      icon={<ArrowRight size={14} />}
-                      iconPosition="right"
-                    >
-                      Read Case Study
-                    </Button>
-                  )}
-                </div>
-              </Card>
-            </div>
-            );
-          })}
-        </div>
+              </motion.div>
+            </Link>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
-};
+}

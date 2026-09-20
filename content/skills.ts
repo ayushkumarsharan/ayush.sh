@@ -103,5 +103,18 @@ export const skillCategories: Record<string, SkillCategory> = {
       { name: "LLM Datasets", context: "Linguistic curation for Project Indus (Tech Mahindra)", level: "exploring" }
     ],
     modes: ['explorer', 'thinker', 'journey']
+  },
+  ai: {
+    title: "AI & Agents",
+    capability: "Autonomous & AI-Assisted Workflows",
+    description: "Orchestrating agentic pipelines, leveraging large language models, and prompt optimization.",
+    skills: [
+      { name: "Generative AI", context: "Gemini, Claude, GPT-4 integration into development pipelines", level: "core", highlight: true },
+      { name: "Agentic Workflows", context: "Antigravity, autonomous problem solving, task orchestration", level: "core", highlight: true },
+      { name: "Prompt Engineering", context: "Context window optimization, structured JSON payload prompting", level: "core", highlight: true },
+      { name: "AI-Assisted Coding", context: "VS Code / Cursor integrations, architectural gatekeeping of AI output", level: "core" },
+      { name: "RAG / Vector DBs", context: "ChromaDB, FastEmbed, local LLM inference engines", level: "experienced" }
+    ],
+    modes: ['builder', 'explorer', 'thinker']
   }
 };

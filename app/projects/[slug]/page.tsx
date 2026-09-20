@@ -1,14 +1,8 @@
-import React from 'react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { projects } from '@/content/projects';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { ArrowLeft, CheckCircle2, Award, Layers, Sparkles, ExternalLink } from 'lucide-react';
-import { ProjectWorldSync } from '@/components/features/ProjectWorldSync';
-import { SystemView } from '@/components/features/SystemView';
-import { PortalLink } from '@/components/ui/PortalLink';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { ProjectVisualizer } from '@/components/features/ProjectVisualizer';
 
 export function generateStaticParams() {
   return projects.map((project) => ({
@@ -16,230 +10,117 @@ export function generateStaticParams() {
   }));
 }
 
-export default function ProjectCaseStudyPage({ params }: { params: { slug: string } }) {
+export default function ProjectPage({ params }: { params: { slug: string } }) {
   const project = projects.find((p) => p.slug === params.slug);
 
   if (!project) {
     notFound();
   }
 
-  const { caseStudy } = project;
-
   return (
-    <div className="animate-fade-in-up" style={{ paddingTop: 'var(--space-24)', paddingBottom: 'var(--space-24)' }}>
-      <ProjectWorldSync projectSlug={params.slug} />
-      <div className="container" style={{ maxWidth: '900px' }}>
-        {/* Back navigation */}
-        <div style={{ marginBottom: 'var(--space-8)' }}>
-          <Button href="/#projects" variant="ghost" size="sm" icon={<ArrowLeft size={15} />}>
-            Back to All Projects
-          </Button>
-        </div>
+    <div 
+      className="project-page" 
+      style={{ 
+        minHeight: '100vh', 
+        paddingTop: '8rem', 
+        paddingBottom: '8rem',
+        background: 'var(--bg-primary)',
+        color: 'var(--text-primary)'
+      }}
+    >
+      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 2rem' }}>
+        <Link 
+          href="/#artifacts" 
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            fontFamily: 'var(--font-mono)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            fontSize: '0.85rem',
+            color: 'var(--text-secondary)',
+            marginBottom: '4rem',
+            textDecoration: 'none',
+            transition: 'color 0.2s ease',
+          }}
+        >
+          <ArrowLeft size={16} />
+          Back to Artifacts
+        </Link>
 
-        {/* Case Study Header */}
-        <div style={{ marginBottom: 'var(--space-12)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 'var(--space-3)' }}>
-            <Badge variant="accent" size="sm">
-              {project.category}
-            </Badge>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-              {project.timeline}
-            </span>
-          </div>
-
-          <h1
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.25rem, 5vw, 3.5rem)',
+        <header style={{ marginBottom: '4rem' }}>
+          <h1 
+            style={{ 
+              fontFamily: 'var(--font-display)', 
+              fontSize: 'clamp(3rem, 6vw, 5rem)',
               lineHeight: 1.1,
-              color: 'var(--text-primary)',
-              marginBottom: 'var(--space-3)',
+              letterSpacing: '-0.03em',
+              marginBottom: '1.5rem'
             }}
           >
             {project.title}
           </h1>
-
-          <div
+          <p 
             style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '1.25rem',
               color: 'var(--accent-primary)',
-              fontWeight: 500,
-              marginBottom: 'var(--space-6)',
+              maxWidth: '800px',
+              lineHeight: 1.6
             }}
           >
-            {project.subtitle}
-          </div>
-
-          <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-            {caseStudy.overview}
+            {project.summary}
           </p>
+        </header>
+
+        <div style={{ marginBottom: '6rem' }}>
+          <ProjectVisualizer slug={project.slug} />
         </div>
 
-        {/* Metrics Grid if available */}
-        {project.metrics && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: 'var(--space-4)',
-              marginBottom: 'var(--space-12)',
-            }}
-          >
-            {project.metrics.map((m, idx) => (
-              <Card key={idx} variant="elevated" padding="md">
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.2rem' }}>
-                  {m.value}
+        {project.caseStudy && (
+          <div style={{ display: 'grid', gap: '6rem' }}>
+            {project.caseStudy.overview && (
+              <section>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginBottom: '2rem', color: 'var(--text-secondary)' }}>Overview</h2>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '1.25rem', lineHeight: 1.8, color: 'var(--text-primary)' }}>
+                  {project.caseStudy.overview}
+                </p>
+              </section>
+            )}
+
+            {project.caseStudy.architecture && (
+              <section>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginBottom: '2rem', color: 'var(--text-secondary)' }}>Architecture</h2>
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: '1.15rem', lineHeight: 1.8, color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>
+                  {project.caseStudy.architecture}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                  {m.label}
-                </div>
-              </Card>
-            ))}
+              </section>
+            )}
+
+            {project.caseStudy.outcomes && project.caseStudy.outcomes.length > 0 && (
+              <section>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', marginBottom: '2rem', color: 'var(--text-secondary)' }}>Outcomes</h2>
+                <ul style={{ listStyle: 'none', padding: 0, display: 'grid', gap: '1rem' }}>
+                  {project.caseStudy.outcomes.map((outcome, i) => (
+                    <li key={i} style={{ 
+                      fontFamily: 'var(--font-body)', 
+                      fontSize: '1.15rem', 
+                      lineHeight: 1.8, 
+                      color: 'var(--text-primary)',
+                      padding: '1.5rem',
+                      background: 'var(--bg-surface)',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border-subtle)'
+                    }}>
+                      {outcome}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </div>
         )}
-
-        {/* Case Study Sections */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)', marginBottom: 'var(--space-16)' }}>
-          {/* 01 Context & Background */}
-          <Card variant="surface" padding="lg">
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-              01 — Context & Background
-            </div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)', marginBottom: 'var(--space-3)' }}>
-              The Operational Landscape
-            </h3>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-              {caseStudy.context}
-            </p>
-          </Card>
-
-          {/* 02 The Core Challenge */}
-          <Card variant="surface" padding="lg">
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-warm)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-              02 — Core Challenge
-            </div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)', marginBottom: 'var(--space-3)' }}>
-              Bottlenecks & Constraints
-            </h3>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-              {caseStudy.challenge}
-            </p>
-          </Card>
-
-          {/* 03 Architecture Blueprint */}
-          <div className="scroll-reveal">
-            <Card variant="elevated" padding="lg" style={{ backgroundColor: 'var(--bg-surface-elevated)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-4)' }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-                    03 — System Architecture
-                  </div>
-                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)' }}>
-                    The Engineering Approach
-                  </h3>
-                </div>
-                <SystemView />
-              </div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 'var(--space-4)' }}>
-                {caseStudy.architecture}
-              </p>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', borderTop: '1px solid var(--border-subtle)', paddingTop: 'var(--space-3)' }}>
-                {project.tags.map((t) => (
-                  <Badge key={t} variant="subtle" size="sm">
-                    {t}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
-          </div>
-
-          {/* 04 Implementation Details */}
-          <Card variant="surface" padding="lg">
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-              04 — Implementation
-            </div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)', marginBottom: 'var(--space-4)' }}>
-              Key Execution Steps
-            </h3>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-              {caseStudy.implementation.map((step, idx) => (
-                <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  <CheckCircle2 size={16} style={{ color: 'var(--accent-primary)', flexShrink: 0, marginTop: '0.2rem' }} />
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
-          {/* 05 Outcomes */}
-          <Card variant="surface" padding="lg">
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-warm)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-              05 — Measured Outcomes
-            </div>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', color: 'var(--text-primary)', marginBottom: 'var(--space-4)' }}>
-              Impact & Results
-            </h3>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
-              {caseStudy.outcomes.map((out, idx) => (
-                <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem', fontSize: '0.925rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
-                  <Award size={16} style={{ color: 'var(--accent-warm)', flexShrink: 0, marginTop: '0.2rem' }} />
-                  <span>{out}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
-          {/* 06 What I Learned */}
-          {caseStudy.learned && (
-            <Card variant="elevated" padding="lg" style={{ backgroundColor: 'var(--bg-surface-elevated)', border: '1px solid var(--accent-border)' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-                06 — Retrospective & Key Learning
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', color: 'var(--text-primary)', marginBottom: 'var(--space-3)' }}>
-                What Building This Taught Me
-              </h3>
-              <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.7, fontStyle: 'italic' }}>
-                "{caseStudy.learned}"
-              </p>
-            </Card>
-          )}
-        </div>
-        
-        {/* Relationship Threads / Continue Exploring */}
-        <div className="scroll-reveal" style={{ marginTop: 'var(--space-16)', paddingTop: 'var(--space-8)', borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: 'var(--text-tertiary)', marginBottom: 'var(--space-4)' }}>
-            CONTINUE EXPLORING
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)' }}>
-            {project.slug === 'quantum-signal-processing' && (
-              <>
-                <PortalLink href="/#signal" nodeId="ach-ieee" variant="card">
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Evidence</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>IEEE Publication</div>
-                </PortalLink>
-                <PortalLink href="/#projects" nodeId="tech-ml" variant="card">
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Technology</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Machine Learning</div>
-                </PortalLink>
-              </>
-            )}
-            {project.slug === 'job-os' && (
-              <>
-                <PortalLink href="/#projects" nodeId="tech-typescript" variant="card">
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Technology</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>TypeScript Ecosystem</div>
-                </PortalLink>
-              </>
-            )}
-            {/* Fallback back to home */}
-            <PortalLink href="/#projects" variant="card">
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)' }}>Return</div>
-              <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>All Projects</div>
-            </PortalLink>
-          </div>
-        </div>
       </div>
     </div>
   );

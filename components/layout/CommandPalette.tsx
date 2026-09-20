@@ -22,6 +22,7 @@ import { getInitialTheme, applyTheme } from '@/lib/theme';
 import { useMode } from '@/lib/ModeContext';
 import { modeOrder, getModeById } from '@/content/modes';
 import { universeConfig, ThemeId } from '@/content/universe.config';
+import { AtmosphereId } from '@/content/atmospheres';
 
 export interface CommandItem {
   id: string;
@@ -39,7 +40,7 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
-  const { setMode, setTheme } = useMode();
+  const { setMode, setAtmosphere } = useMode();
 
   const baseCommands: CommandItem[] = [
     {
@@ -153,7 +154,7 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
       title: `Switch to ${theme.label} Theme`,
       category: 'Themes',
       icon: <Sun size={16} />,
-      action: () => { setTheme(tId); onClose(); },
+      action: () => { setAtmosphere(tId as unknown as AtmosphereId); onClose(); },
       keywords: ['theme', 'color', 'appearance', tId.toLowerCase()]
     };
   });

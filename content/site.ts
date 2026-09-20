@@ -42,7 +42,9 @@ export const siteConfig: SiteConfig = {
     { platform: "LinkedIn", url: "https://linkedin.com/in/ayush-kumar-sharan", handle: "ayush-kumar-sharan", icon: "linkedin" },
     { platform: "GitHub", url: "https://github.com/ayushkumarsharan", handle: "ayushkumarsharan", icon: "github" },
     { platform: "Email", url: "mailto:ayuskumarsharan@gmail.com", handle: "ayuskumarsharan@gmail.com", icon: "mail" },
-    { platform: "Phone", url: "tel:+919667972192", handle: "+91 9667972192", icon: "phone", hidden: true }
+    { platform: "Phone", url: "tel:+919667972192", handle: "+91 9667972192", icon: "phone", hidden: true },
+    { platform: "Spotify", url: "https://open.spotify.com/user/31etap5aauilj6c2cgv2gd4j5mme?si=62531c7e26fe4855", handle: "Spotify", icon: "spotify" },
+    { platform: "Apple Music", url: "https://music.apple.com/profile/shayusharan48", handle: "shayusharan48", icon: "music" }
   ],
   projectStatement: "This website is a part-time personal project engineered by Ayush Kumar Sharan to explore modern web performance, accessible typography, and interdisciplinary visual storytelling."
 };

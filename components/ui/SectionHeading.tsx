@@ -1,94 +1,27 @@
+'use client';
 import React from 'react';
 
-interface SectionHeadingProps {
-  number?: string;
-  label: string;
-  title: string;
-  subtitle?: string;
-  align?: 'left' | 'center';
-  className?: string;
-}
+export const Card: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className, style }) => (
+  <div className={className} style={{ padding: '1.5rem', background: 'var(--bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-medium)', ...style }}>
+    {children}
+  </div>
+);
 
-export const SectionHeading: React.FC<SectionHeadingProps> = ({
-  number,
-  label,
-  title,
-  subtitle,
-  align = 'left',
-  className = '',
-}) => {
-  return (
-    <div
-      style={{
-        textAlign: align,
-        marginBottom: 'var(--space-12)',
-        maxWidth: align === 'center' ? '760px' : '820px',
-        marginLeft: align === 'center' ? 'auto' : undefined,
-        marginRight: align === 'center' ? 'auto' : undefined,
-      }}
-      className={className}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          justifyContent: align === 'center' ? 'center' : 'flex-start',
-          marginBottom: 'var(--space-3)',
-        }}
-      >
-        {number && (
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.8rem',
-              color: 'var(--accent-primary)',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-            }}
-          >
-            {number}
-          </span>
-        )}
-        {number && <span style={{ color: 'var(--border-strong)', fontSize: '0.8rem' }}>/</span>}
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.775rem',
-            color: 'var(--text-tertiary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.12em',
-            fontWeight: 500,
-          }}
-        >
-          {label}
-        </span>
-      </div>
+export const Badge: React.FC<{ children: React.ReactNode; variant?: string; className?: string }> = ({ children, className }) => (
+  <span className={className} style={{ padding: '0.25rem 0.75rem', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-full)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+    {children}
+  </span>
+);
 
-      <h2
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 'clamp(2rem, 3.8vw, 3rem)',
-          lineHeight: 1.15,
-          color: 'var(--text-primary)',
-          marginBottom: subtitle ? 'var(--space-4)' : 0,
-        }}
-      >
-        {title}
-      </h2>
+export const Button: React.FC<{ children: React.ReactNode; variant?: string; asChild?: boolean; className?: string; onClick?: () => void }> = ({ children, className, onClick }) => (
+  <button className={className} onClick={onClick} style={{ padding: '0.5rem 1rem', background: 'var(--accent-primary)', color: '#fff', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
+    {children}
+  </button>
+);
 
-      {subtitle && (
-        <p
-          style={{
-            fontSize: 'clamp(1rem, 1.2vw, 1.125rem)',
-            color: 'var(--text-secondary)',
-            lineHeight: 1.6,
-            marginTop: 'var(--space-2)',
-          }}
-        >
-          {subtitle}
-        </p>
-      )}
-    </div>
-  );
-};
+export const SectionHeading: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
+  <div style={{ marginBottom: '2rem' }}>
+    <h2 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>{title}</h2>
+    {subtitle && <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>{subtitle}</p>}
+  </div>
+);

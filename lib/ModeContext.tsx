@@ -4,13 +4,13 @@ import React, { createContext, useContext, useEffect, useState, useTransition } 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ModeId, modeOrder, getModeById } from '@/content/modes';
 import { universeConfig, ThemeId } from '@/content/universe.config';
-import { applyTheme as applyBasicTheme, getInitialTheme } from '@/lib/theme';
+import { AtmosphereId, atmospheres } from '@/content/atmospheres';
 
 interface ModeContextType {
   activeMode: ModeId | null;
-  activeTheme: ThemeId;
+  activeAtmosphere: AtmosphereId;
   setMode: (mode: ModeId | null) => void;
-  setTheme: (theme: ThemeId) => void;
+  setAtmosphere: (atmosphere: AtmosphereId) => void;
   isTransitioning: boolean;
   isInitialLoad: boolean;
 }
@@ -29,64 +29,37 @@ export function ModeProvider({ children }: { children: React.ReactNode }) {
     : null;
 
   const [activeMode, setActiveModeState] = useState<ModeId | null>(initialMode);
-  const [activeTheme, setActiveThemeState] = useState<ThemeId>(universeConfig.defaultTheme);
+  const [activeAtmosphere, setActiveAtmosphereState] = useState<AtmosphereId>('cosmos');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Sync theme on mount
+  // Sync mode and atmosphere to data attributes for CSS driving
   useEffect(() => {
     setIsInitialLoad(false);
-    const saved = getInitialTheme();
-    setActiveThemeState(saved);
-  }, []);
-
-  // Sync mode changes to CSS custom properties
-  useEffect(() => {
     const root = document.documentElement;
     
     if (activeMode) {
-      const modeData = getModeById(activeMode);
-      if (modeData) {
-        root.style.setProperty('--mode-hue', modeData.accentHue.toString());
-        root.style.setProperty('--mode-motion', modeData.motionIntensity.toString());
-        root.style.setProperty('--mode-scale', modeData.typographyScale.toString());
-        root.setAttribute('data-mode', activeMode);
-      }
+      root.setAttribute('data-world', activeMode);
     } else {
-      // Arrival state styles (quiet, neutral)
-      root.style.setProperty('--mode-hue', '220');
-      root.style.setProperty('--mode-motion', '0.2');
-      root.style.setProperty('--mode-scale', '1');
-      root.removeAttribute('data-mode');
-    }
-    
-    // Sync theme colors
-    const themeData = universeConfig.themes[activeTheme];
-    if (themeData) {
-      root.setAttribute('data-universe-theme', activeTheme);
-      root.style.setProperty('--bg-primary', themeData.colors.bgPrimary);
-      root.style.setProperty('--bg-surface', themeData.colors.bgSurface);
-      root.style.setProperty('--bg-surface-elevated', themeData.colors.bgSurfaceElevated);
-      root.style.setProperty('--bg-translucent', themeData.colors.bgTranslucent);
-      
-      root.style.setProperty('--text-primary', themeData.colors.textPrimary);
-      root.style.setProperty('--text-secondary', themeData.colors.textSecondary);
-      root.style.setProperty('--text-tertiary', themeData.colors.textTertiary);
-      root.style.setProperty('--text-muted', themeData.colors.textMuted);
-      
-      root.style.setProperty('--accent-primary', themeData.colors.accentPrimary);
-      root.style.setProperty('--accent-warm', themeData.colors.accentWarm);
-      
-      root.style.setProperty('--border-subtle', themeData.colors.borderSubtle);
-      root.style.setProperty('--border-medium', themeData.colors.borderMedium);
+      root.removeAttribute('data-world');
     }
 
-  }, [activeMode, activeTheme]);
+    if (activeAtmosphere) {
+      root.setAttribute('data-atmosphere', activeAtmosphere);
+      // Let's also set the structural profiles to CSS so the engine can adapt
+      const config = atmospheres[activeAtmosphere];
+      if (config) {
+        root.setAttribute('data-typography-profile', config.typographyProfile);
+        root.setAttribute('data-surface-material', config.surfaceMaterial);
+        root.setAttribute('data-motion-language', config.motionLanguage);
+        root.setAttribute('data-background-renderer', config.backgroundRenderer);
+      }
+    }
+  }, [activeMode, activeAtmosphere]);
 
   // Handle URL sync
   const setMode = (mode: ModeId | null) => {
     startTransition(() => {
       setActiveModeState(mode);
-      
       const params = new URLSearchParams(window.location.search);
       if (mode) {
         params.set('mode', mode);
@@ -97,19 +70,18 @@ export function ModeProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const setTheme = (theme: ThemeId) => {
+  const setAtmosphere = (atmosphere: AtmosphereId) => {
     startTransition(() => {
-      setActiveThemeState(theme);
-      applyBasicTheme(theme);
+      setActiveAtmosphereState(atmosphere);
     });
   };
 
   return (
     <ModeContext.Provider value={{
       activeMode,
-      activeTheme,
+      activeAtmosphere,
       setMode,
-      setTheme,
+      setAtmosphere,
       isTransitioning: isPending,
       isInitialLoad
     }}>

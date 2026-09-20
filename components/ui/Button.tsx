@@ -1,111 +1,27 @@
+'use client';
 import React from 'react';
-import Link from 'next/link';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-  href?: string;
-  external?: boolean;
-  icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
-  children: React.ReactNode;
-}
+export const Card: React.FC<{ children: React.ReactNode; className?: string; style?: React.CSSProperties }> = ({ children, className, style }) => (
+  <div className={className} style={{ padding: '1.5rem', background: 'var(--bg-surface)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-medium)', ...style }}>
+    {children}
+  </div>
+);
 
-export const Button: React.FC<ButtonProps> = ({
-  variant = 'primary',
-  size = 'md',
-  href,
-  external,
-  icon,
-  iconPosition = 'left',
-  children,
-  className = '',
-  ...props
-}) => {
-  const getStyles = (): React.CSSProperties => {
-    const base: React.CSSProperties = {
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '0.5rem',
-      fontWeight: 500,
-      fontFamily: 'var(--font-body)',
-      borderRadius: 'var(--radius-md)',
-      transition: 'all var(--transition-fast)',
-      textDecoration: 'none',
-      cursor: 'pointer',
-      border: '1px solid transparent',
-      lineHeight: 1,
-      whiteSpace: 'nowrap',
-    };
+export const Badge: React.FC<{ children: React.ReactNode; variant?: string; className?: string }> = ({ children, className }) => (
+  <span className={className} style={{ padding: '0.25rem 0.75rem', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-full)', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+    {children}
+  </span>
+);
 
-    // Size styles
-    if (size === 'sm') {
-      base.padding = '0.5rem 0.875rem';
-      base.fontSize = '0.85rem';
-    } else if (size === 'lg') {
-      base.padding = '0.875rem 1.75rem';
-      base.fontSize = '1.05rem';
-    } else {
-      base.padding = '0.675rem 1.25rem';
-      base.fontSize = '0.925rem';
-    }
+export const Button: React.FC<{ children: React.ReactNode; variant?: string; asChild?: boolean; className?: string; onClick?: () => void }> = ({ children, className, onClick }) => (
+  <button className={className} onClick={onClick} style={{ padding: '0.5rem 1rem', background: 'var(--accent-primary)', color: '#fff', borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
+    {children}
+  </button>
+);
 
-    // Variant styles
-    if (variant === 'primary') {
-      base.backgroundColor = 'var(--accent-primary)';
-      base.color = '#ffffff';
-      base.borderColor = 'transparent';
-      base.boxShadow = 'var(--shadow-sm)';
-    } else if (variant === 'secondary') {
-      base.backgroundColor = 'var(--bg-surface-elevated)';
-      base.color = 'var(--text-primary)';
-      base.borderColor = 'var(--border-medium)';
-    } else if (variant === 'outline') {
-      base.backgroundColor = 'transparent';
-      base.color = 'var(--text-primary)';
-      base.borderColor = 'var(--border-strong)';
-    } else if (variant === 'ghost') {
-      base.backgroundColor = 'transparent';
-      base.color = 'var(--text-secondary)';
-      base.borderColor = 'transparent';
-    }
-
-    return base;
-  };
-
-  const content = (
-    <>
-      {icon && iconPosition === 'left' && <span style={{ display: 'inline-flex' }}>{icon}</span>}
-      <span>{children}</span>
-      {icon && iconPosition === 'right' && <span style={{ display: 'inline-flex' }}>{icon}</span>}
-    </>
-  );
-
-  if (href) {
-    if (external) {
-      return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={getStyles()}
-          className={`btn-hover-effect ${className}`}
-        >
-          {content}
-        </a>
-      );
-    }
-    return (
-      <Link href={href} style={getStyles()} className={`btn-hover-effect ${className}`}>
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <button style={getStyles()} className={`btn-hover-effect ${className}`} {...props}>
-      {content}
-    </button>
-  );
-};
+export const SectionHeading: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
+  <div style={{ marginBottom: '2rem' }}>
+    <h2 style={{ fontSize: '2rem', fontFamily: 'var(--font-display)', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>{title}</h2>
+    {subtitle && <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>{subtitle}</p>}
+  </div>
+);
